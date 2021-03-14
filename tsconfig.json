@@ -1,27 +1,25 @@
 {
-  "compilerOptions": {
-    "target": "es5",
+  "compilerOptions": {                            /* Instructs the TypeScript compiler how to compile .ts files */
+    "allowJs": true,                              /* Allow javascript files to be compiled */
+    "allowSyntheticDefaultImports": true,         /* Allow default imports from modules with no default export. This does not affect code emit, just typechecking. */
+    "esModuleInterop": true,                      /* Emit '__importStar' and '__importDefault' helpers for runtime babel ecosystem compatibility and enable '--allowSyntheticDefaultImports' for typesystem compatibility. */
+    "forceConsistentCasingInFileNames": true,     /* Disallow inconsistently-cased references to the same file. Enabling this setting is recommended. */
+    "isolatedModules": true,                      /* Unconditionally emit imports for unresolved files */
+    "jsx": "react-jsx",                           /* Specify JSX code generation: 'preserve', 'react', 'react-jsx', 'react-jsxdev' or 'react-native' */
     "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "noFallthroughCasesInSwitch": true,
-    "module": "esnext",
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true,
-    "jsx": "react-jsx"
+      "dom"
+    ],                                    /* List of library files to be included in the compilation */
+    "module": "commonjs",                         /* Specify module code generation: 'None', 'CommonJS', 'AMD', 'System', 'UMD', 'ES6', 'ES2015', 'ES2020' or 'ESNext' */
+    "noFallthroughCasesInSwitch": true,           /* Report errors for fallthrough cases in switch statement */
+    "noImplicitAny": true,                        /* Warn on expressions and declarations with an implied 'any' type */
+    "resolveJsonModule": true,                    /* Include modules imported with '.json' extension */
+    "skipLibCheck": true,                         /* Skip type checking of declaration files */
+    "strict": true,                               /* Enable all strict type checking options. Enabling this setting is recommended. */
+    "target": "esnext"                           /* Specify ECMAScript target version: 'ES3', 'ES5', 'ES6'/'ES2015', 'ES2016', 'ES2017', 'ES2018', 'ES2019', 'ES2020', 'ESNext' */
   },
-  "include": [
+  "include": [                                    /* Specifies a list of glob patterns that match files to be included in compilation. If no 'files' or 'include' property is present in a tsconfig.json, the compiler defaults to including all files in the containing directory and subdirectories except those specified by 'exclude' */
     "src",
     ".eslintrc.js"
-  ]
+  ],
+  "exclude": ["node_modules"]                     /* Specifies a list of files to be excluded from compilation. The 'exclude' property only affects the files included via the 'include' property and not the 'files' property */
 }
