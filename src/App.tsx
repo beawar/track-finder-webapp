@@ -6,8 +6,8 @@ export function App(): JSX.Element {
 	return (
 		<BrowserRouter>
 			<Switch>
-				{routes.map(({ path, component }) => (
-					<Route key={path} path={path} exact component={component} />
+				{routes.map(({ path, component, key }) => (
+					<Route key={key} path={path} exact component={component} />
 				))}
 			</Switch>
 		</BrowserRouter>
