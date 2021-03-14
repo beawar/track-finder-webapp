@@ -1,8 +1,12 @@
 module.exports = {
 	extends: [
 		'eslint:recommended',
+		'plugin:import/typescript',
 		'plugin:@typescript-eslint/eslint-recommended',
 		'plugin:@typescript-eslint/recommended',
+		'plugin:react/recommended',
+		'plugin:react-hooks/recommended',
+		'plugin:jsx-a11y/recommended',
 		'airbnb-typescript',
 		'airbnb/hooks',
 		'plugin:prettier/recommended',
@@ -41,10 +45,13 @@ module.exports = {
 		quotes: ['error', 'single', { avoidEscape: true, allowTemplateLiterals: false }],
 		'@typescript-eslint/object-curly-spacing': 'off',
 		'import/prefer-default-export': 'off',
+		'react/react-in-jsx-scope': 'off',
+		'import/no-extraneous-dependencies': 'warn',
 	},
 	settings: {
 		react: {
 			version: 'detect',
 		},
 	},
+	ignorePatterns: ['node_modules', 'build', 'dist'],
 };
