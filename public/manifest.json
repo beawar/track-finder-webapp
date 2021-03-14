@@ -1,11 +1,9 @@
 {
-  "short_name": "Track Finder App",
-  "name": "Track Finder App",
-  "icons": [
-
-  ],
-  "start_url": ".",
-  "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+	"short_name": "Track Finder App",
+	"name": "Track Finder App",
+	"icons": [],
+	"start_url": ".",
+	"display": "standalone",
+	"theme_color": "#000000",
+	"background_color": "#ffffff"
 }
