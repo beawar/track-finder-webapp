@@ -1,9 +1,7 @@
-const HomePage = () => {
-    return (
-        <div>
-            <h1>Homepage</h1>
-        </div>
-    );
-};
+import React from "react";
 
-export default HomePage;
+export const HomePage = (): JSX.Element => (
+    <div>
+      <h1>Homepage</h1>
+    </div>
+  );

@@ -1,13 +1,15 @@
-import HomePage from "./pages/HomePage";
-import Error404 from "./pages/Error404";
+import { HomePage } from "./pages/HomePage";
+import { ErrorPage } from "./pages/ErrorPage";
 
 export const routes = [
-    {
-        path: '/',
-        component: HomePage
-    },
-    {
-        path: '*',
-        component: Error404
-    }
-]
+  {
+    path: "/",
+    key: "home",
+    component: HomePage,
+  },
+  {
+    path: "*",
+    key: "errorPage",
+    component: ErrorPage,
+  },
+];
