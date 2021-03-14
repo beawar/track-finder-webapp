@@ -13,9 +13,9 @@
 		"build": "react-scripts build",
 		"test": "react-scripts test --watchAll=false",
 		"eject": "react-scripts eject",
-		"prettify": "prettier --write",
+		"prettify": "prettier --write src/",
 		"lint": "npm run lint:es && npm run lint:ts",
-		"lint:es": "eslint",
+		"lint:es": "eslint --ext .js,.jsx,.ts,.tsx",
 		"lint:ts": "tsc --noEmit",
 		"lint:fix": "npm run lint:es -- --fix",
 		"validate": "npm run --print-label lint && npm run test && npm run build"
@@ -70,6 +70,10 @@
 		}
 	},
 	"lint-staged": {
-		"*.{js,jsx,ts,tsx}": ["npm run lint", "npm run prettify"]
+		"*.{js,jsx,ts,tsx}": [
+			"npm run lint:es",
+			"bash -c tsc --noEmit",
+			"npm run prettify"
+		]
 	}
 }

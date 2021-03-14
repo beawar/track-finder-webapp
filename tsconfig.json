@@ -22,6 +22,7 @@
 		".eslintrc.js"
 	],
 	"exclude": [
+		/* Specifies a list of files to be excluded from compilation. The 'exclude' property only affects the files included via the 'include' property and not the 'files' property */
 		"node_modules"
-	] /* Specifies a list of files to be excluded from compilation. The 'exclude' property only affects the files included via the 'include' property and not the 'files' property */
+    ]
 }
