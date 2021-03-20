@@ -1,0 +1,36 @@
+overwrite: true
+schema: ${REACT_APP_API_TRACK_FINDER}/graphql
+documents:
+  - "src/graphql/**/*.graphql"
+  - "src/graphql/schema.graphql"
+generates:
+  src/graphql/schema.graphql:
+    plugins:
+      - schema-ast
+    hooks:
+      afterOneFileWrite:
+        - prettier --write
+  src/types/graphql.ts:
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+      - "typescript-react-apollo"
+      - time
+      - add:
+          content: "/* eslint-disable @typescript-eslint/explicit-module-boundary-types */"
+    config:
+      scalars:
+        DateTime: Date
+        Time: Date
+    hooks:
+      afterOneFileWrite:
+        - prettier --write
+        - eslint --fix
+  src/apollo/possibleTypes.ts:
+    plugins:
+      - "fragment-matcher"
+      - time
+    hooks:
+      afterOneFileWrite:
+        - prettier --write
+        - eslint --fix
