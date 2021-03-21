@@ -3,7 +3,9 @@ import ReactDOM from 'react-dom';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core';
 import { green } from '@material-ui/core/colors';
+import { ApolloProvider } from '@apollo/client';
 import { App } from './App';
+import { client } from './apollo/apollo';
 
 const theme = createMuiTheme({
 	palette: {
@@ -17,9 +19,11 @@ const theme = createMuiTheme({
 ReactDOM.render(
 	<React.StrictMode>
 		<CssBaseline />
-		<MuiThemeProvider theme={theme}>
-			<App />
-		</MuiThemeProvider>
+		<ApolloProvider client={client}>
+			<MuiThemeProvider theme={theme}>
+				<App />
+			</MuiThemeProvider>
+		</ApolloProvider>
 	</React.StrictMode>,
 	document.getElementById('root'),
 );
