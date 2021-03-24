@@ -2,7 +2,7 @@ overwrite: true
 schema: ${REACT_APP_API_TRACK_FINDER}/graphql
 documents:
   - "src/graphql/**/*.graphql"
-  - "src/graphql/schema.graphql"
+  - "!src/graphql/schema.graphql"
 generates:
   src/graphql/schema.graphql:
     plugins:
@@ -17,11 +17,12 @@ generates:
       - "typescript-react-apollo"
       - time
       - add:
-          content: "/* eslint-disable @typescript-eslint/explicit-module-boundary-types */"
+          content:
+            - "/* eslint-disable @typescript-eslint/explicit-module-boundary-types */"
     config:
       scalars:
-        DateTime: Date
-        Time: Date
+        DateTime: string
+        Duration: string
     hooks:
       afterOneFileWrite:
         - prettier --write
