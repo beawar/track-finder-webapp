@@ -17,7 +17,7 @@ module.exports = {
 		ecmaFeatures: {
 			jsx: true,
 		},
-		project: 'tsconfig.json',
+		project: 'tsconfig.eslint.json',
 		sourceType: 'module',
 	},
 	env: {
@@ -47,6 +47,7 @@ module.exports = {
 		'import/prefer-default-export': 'off',
 		'react/react-in-jsx-scope': 'off',
 		'import/no-extraneous-dependencies': 'warn',
+		'react/require-default-props': 'off',
 	},
 	settings: {
 		react: {
