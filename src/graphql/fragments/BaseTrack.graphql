@@ -1,0 +1,9 @@
+fragment BaseTrack on Track {
+	id
+	title
+	description
+	length
+	time
+	altitudeDifference
+	uploadTime
+}
