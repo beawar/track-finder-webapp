@@ -14,9 +14,8 @@
 		"noFallthroughCasesInSwitch": true,
 		"resolveJsonModule": true,
 		"skipLibCheck": true,
-		"strict": true,
-		"outDir": "dist"
+		"strict": true
 	},
-	"include": ["src", "*.js"],
+	"include": ["src"],
 	"exclude": ["node_modules", "build", "dist"]
 }

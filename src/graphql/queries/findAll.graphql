@@ -1,0 +1,11 @@
+#import BaseTrack from '../fragments/BaseTrack.graphql'
+
+query findAllTracks {
+	findAll {
+		...BaseTrack
+		links {
+			id
+			link
+		}
+	}
+}

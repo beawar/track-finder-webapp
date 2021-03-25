@@ -15,19 +15,21 @@ export type Scalars = {
 	Int: number;
 	Float: number;
 	/** An RFC-3339 compliant DateTime Scalar */
-	DateTime: Date;
-	/** An RFC-3339 compliant Full Time Scalar */
-	Time: Date;
+	DateTime: string;
+	/** ISO_8601 compliant Duration Scalar */
+	Duration: string;
 };
 
 export type Link = {
 	__typename?: 'Link';
-	id?: Maybe<Scalars['ID']>;
-	link?: Maybe<Scalars['String']>;
+	id: Scalars['ID'];
+	link: Scalars['String'];
+	mainLink?: Maybe<Scalars['Boolean']>;
 };
 
 export type LinkInput = {
 	link: Scalars['String'];
+	mainLink?: Maybe<Scalars['Boolean']>;
 };
 
 export type Mutation = {
@@ -75,23 +77,23 @@ export type QueryGetLinkArgs = {
 
 export type Track = {
 	__typename?: 'Track';
-	id?: Maybe<Scalars['ID']>;
-	title?: Maybe<Scalars['String']>;
+	id: Scalars['ID'];
+	title: Scalars['String'];
 	description?: Maybe<Scalars['String']>;
 	length?: Maybe<Scalars['Float']>;
-	time?: Maybe<Scalars['Time']>;
+	time?: Maybe<Scalars['Duration']>;
 	altitudeDifference?: Maybe<Scalars['Int']>;
-	links?: Maybe<Array<Link>>;
-	uploadTime?: Maybe<Scalars['DateTime']>;
+	links: Array<Link>;
+	uploadTime: Scalars['DateTime'];
 };
 
 export type TrackInput = {
 	title: Scalars['String'];
 	description?: Maybe<Scalars['String']>;
 	length?: Maybe<Scalars['Float']>;
-	time?: Maybe<Scalars['Time']>;
+	time?: Maybe<Scalars['Duration']>;
 	altitudeDifference?: Maybe<Scalars['Int']>;
-	links?: Maybe<Array<Maybe<LinkInput>>>;
+	links?: Maybe<Array<LinkInput>>;
 };
 
 export type BaseTrackFragment = { __typename?: 'Track' } & Pick<
@@ -102,7 +104,11 @@ export type BaseTrackFragment = { __typename?: 'Track' } & Pick<
 export type FindAllTracksQueryVariables = Exact<{ [key: string]: never }>;
 
 export type FindAllTracksQuery = { __typename?: 'Query' } & {
-	findAll: Array<{ __typename?: 'Track' } & BaseTrackFragment>;
+	findAll: Array<
+		{ __typename?: 'Track' } & {
+			links: Array<{ __typename?: 'Link' } & Pick<Link, 'id' | 'link'>>;
+		} & BaseTrackFragment
+	>;
 };
 
 export const BaseTrackFragmentDoc = gql`
@@ -120,6 +126,10 @@ export const FindAllTracksDocument = gql`
 	query findAllTracks {
 		findAll {
 			...BaseTrack
+			links {
+				id
+				link
+			}
 		}
 	}
 	${BaseTrackFragmentDoc}
@@ -164,4 +174,4 @@ export type FindAllTracksQueryResult = Apollo.QueryResult<
 	FindAllTracksQuery,
 	FindAllTracksQueryVariables
 >;
-// Generated on 2021-03-20T18:29:13+01:00
+// Generated on 2021-03-21T19:32:07+01:00

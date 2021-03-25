@@ -16,14 +16,24 @@ const theme = createMuiTheme({
 	},
 });
 
-ReactDOM.render(
-	<React.StrictMode>
-		<CssBaseline />
-		<ApolloProvider client={client}>
-			<MuiThemeProvider theme={theme}>
-				<App />
-			</MuiThemeProvider>
-		</ApolloProvider>
-	</React.StrictMode>,
-	document.getElementById('root'),
-);
+async function bootstrapApp() {
+	if (process.env.NODE_ENV === 'development' && process.env.REACT_APP_API_MOCK === 'true') {
+		// eslint-disable-next-line @typescript-eslint/no-var-requires,global-require
+		const { worker } = require('./mocks/browser');
+		await worker.start();
+	}
+
+	ReactDOM.render(
+		<React.StrictMode>
+			<CssBaseline />
+			<ApolloProvider client={client}>
+				<MuiThemeProvider theme={theme}>
+					<App />
+				</MuiThemeProvider>
+			</ApolloProvider>
+		</React.StrictMode>,
+		document.getElementById('root'),
+	);
+}
+
+bootstrapApp();

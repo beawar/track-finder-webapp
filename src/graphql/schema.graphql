@@ -1,53 +1,67 @@
-"""An RFC-3339 compliant DateTime Scalar"""
+"""
+An RFC-3339 compliant DateTime Scalar
+"""
 scalar DateTime
 
+"""
+ISO_8601 compliant Duration Scalar
+"""
+scalar Duration
+
 type Link {
-  id: ID
-  link: String
+	id: ID!
+	link: String!
+	mainLink: Boolean
 }
 
 input LinkInput {
-  link: String!
+	link: String!
+	mainLink: Boolean
 }
 
 type Mutation {
-  """track mutation"""
-  createTrack(track: TrackInput!): Track!
-  deleteTrack(id: ID!): Track
+	"""
+	track mutation
+	"""
+	createTrack(track: TrackInput!): Track!
+	deleteTrack(id: ID!): Track
 
-  """link mutation"""
-  createLink(track: TrackInput!): Track!
-  deleteLink(id: ID!): Track
+	"""
+	link mutation
+	"""
+	createLink(track: TrackInput!): Track!
+	deleteLink(id: ID!): Track
 }
 
 type Query {
-  """track query"""
-  getTrack(id: ID!): Track
-  findAll: [Track!]!
+	"""
+	track query
+	"""
+	getTrack(id: ID!): Track
+	findAll: [Track!]!
 
-  """link query"""
-  getLink(id: ID!): Link
+	"""
+	link query
+	"""
+	getLink(id: ID!): Link
 }
 
-"""An RFC-3339 compliant Full Time Scalar"""
-scalar Time
-
 type Track {
-  id: ID
-  title: String
-  description: String
-  length: Float
-  time: Time
-  altitudeDifference: Int
-  links: [Link!]
-  uploadTime: DateTime
+	id: ID!
+	title: String!
+	description: String
+	length: Float
+	time: Duration
+	altitudeDifference: Int
+	links: [Link!]!
+	uploadTime: DateTime!
 }
 
 input TrackInput {
-  title: String!
-  description: String
-  length: Float
-  time: Time
-  altitudeDifference: Int
-  links: [LinkInput]
+	title: String!
+	description: String
+	length: Float
+	time: Duration
+	altitudeDifference: Int
+	links: [LinkInput!]
 }
