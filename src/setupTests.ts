@@ -4,9 +4,13 @@
 // learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom';
 import { server } from './mocks/server';
+import { client } from './apollo/apollo';
 
 // Establish API mocking before all tests.
-beforeAll(() => server.listen());
+beforeAll(() => {
+	server.listen();
+	Object.defineProperty(global, 'apolloClient', { value: client, writable: true });
+});
 // Reset any request handlers that we may add during the tests,
 // so they don't affect other tests.
 afterEach(() => server.resetHandlers());
