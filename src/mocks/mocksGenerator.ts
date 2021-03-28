@@ -1,5 +1,6 @@
 import faker from 'faker';
 import { Link, Track } from '../types/graphql';
+import { TRACKS_LOAD_LIMIT } from '../utils/constants';
 
 function generateLink(trackId: string, id?: number): Link {
 	const idStr = id ? `${id}` : `${faker.random.number()}`;
@@ -20,7 +21,7 @@ function generateLinks(trackId: string, limit = 0): Link[] {
 }
 
 function generateTrack(id?: number): Track {
-	const idStr = id ? `${id}` : `${faker.random.number()}`;
+	const idStr = id !== undefined ? `${id}` : `${faker.random.number()}`;
 	return {
 		__typename: 'Track',
 		altitudeDifference: faker.random.number(3000),
@@ -35,10 +36,14 @@ function generateTrack(id?: number): Track {
 }
 
 export function generateTracks(limit?: number): Track[] {
-	let tracksNumber = limit;
-	if (!tracksNumber) {
-		tracksNumber = faker.random.number({ min: 1, max: 25 });
-	}
+	const tracksNumber =
+		limit !== undefined
+			? limit
+			: faker.random.number({
+					min: 1,
+					max: TRACKS_LOAD_LIMIT,
+			  });
+
 	const tracks: Track[] = [];
 	for (let i = 0; i < tracksNumber; i += 1) {
 		tracks.push(generateTrack(i));

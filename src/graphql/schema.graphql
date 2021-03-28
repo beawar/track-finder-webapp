@@ -33,12 +33,19 @@ type Mutation {
 	deleteLink(id: ID!): Track
 }
 
+type PageInfo {
+	hasPreviousPage: Boolean!
+	hasNextPage: Boolean!
+}
+
 type Query {
 	"""
 	track query
 	"""
 	getTrack(id: ID!): Track
 	findAll: [Track!]!
+	getAllPageable(limit: Int!, after: ID): TrackConnection
+	findByTitleDescription(searchText: String!): [Track!]!
 
 	"""
 	link query
@@ -55,6 +62,16 @@ type Track {
 	altitudeDifference: Int
 	links: [Link!]!
 	uploadTime: DateTime!
+}
+
+type TrackConnection {
+	edges: [TrackEdge!]!
+	pageInfo: PageInfo!
+}
+
+type TrackEdge {
+	cursor: ID!
+	node: Track!
 }
 
 input TrackInput {

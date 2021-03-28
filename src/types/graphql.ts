@@ -58,17 +58,34 @@ export type MutationDeleteLinkArgs = {
 	id: Scalars['ID'];
 };
 
+export type PageInfo = {
+	__typename?: 'PageInfo';
+	hasPreviousPage: Scalars['Boolean'];
+	hasNextPage: Scalars['Boolean'];
+};
+
 export type Query = {
 	__typename?: 'Query';
 	/** track query */
 	getTrack?: Maybe<Track>;
 	findAll: Array<Track>;
+	getAllPageable?: Maybe<TrackConnection>;
+	findByTitleDescription: Array<Track>;
 	/** link query */
 	getLink?: Maybe<Link>;
 };
 
 export type QueryGetTrackArgs = {
 	id: Scalars['ID'];
+};
+
+export type QueryGetAllPageableArgs = {
+	limit: Scalars['Int'];
+	after?: Maybe<Scalars['ID']>;
+};
+
+export type QueryFindByTitleDescriptionArgs = {
+	searchText: Scalars['String'];
 };
 
 export type QueryGetLinkArgs = {
@@ -87,6 +104,18 @@ export type Track = {
 	uploadTime: Scalars['DateTime'];
 };
 
+export type TrackConnection = {
+	__typename?: 'TrackConnection';
+	edges: Array<TrackEdge>;
+	pageInfo: PageInfo;
+};
+
+export type TrackEdge = {
+	__typename?: 'TrackEdge';
+	cursor: Scalars['ID'];
+	node: Track;
+};
+
 export type TrackInput = {
 	title: Scalars['String'];
 	description?: Maybe<Scalars['String']>;
@@ -101,13 +130,23 @@ export type BaseTrackFragment = { __typename?: 'Track' } & Pick<
 	'id' | 'title' | 'description' | 'length' | 'time' | 'altitudeDifference' | 'uploadTime'
 >;
 
-export type FindAllTracksQueryVariables = Exact<{ [key: string]: never }>;
+export type FindAllTracksQueryVariables = Exact<{
+	limit: Scalars['Int'];
+	after?: Maybe<Scalars['ID']>;
+}>;
 
 export type FindAllTracksQuery = { __typename?: 'Query' } & {
-	findAll: Array<
-		{ __typename?: 'Track' } & {
-			links: Array<{ __typename?: 'Link' } & Pick<Link, 'id' | 'link'>>;
-		} & BaseTrackFragment
+	getAllPageable?: Maybe<
+		{ __typename?: 'TrackConnection' } & {
+			edges: Array<
+				{ __typename?: 'TrackEdge' } & Pick<TrackEdge, 'cursor'> & {
+						node: { __typename?: 'Track' } & {
+							links: Array<{ __typename?: 'Link' } & Pick<Link, 'id' | 'link'>>;
+						} & BaseTrackFragment;
+					}
+			>;
+			pageInfo: { __typename?: 'PageInfo' } & Pick<PageInfo, 'hasPreviousPage' | 'hasNextPage'>;
+		}
 	>;
 };
 
@@ -123,12 +162,21 @@ export const BaseTrackFragmentDoc = gql`
 	}
 `;
 export const FindAllTracksDocument = gql`
-	query findAllTracks {
-		findAll {
-			...BaseTrack
-			links {
-				id
-				link
+	query findAllTracks($limit: Int!, $after: ID) {
+		getAllPageable(limit: $limit, after: $after) {
+			edges {
+				cursor
+				node {
+					...BaseTrack
+					links {
+						id
+						link
+					}
+				}
+			}
+			pageInfo {
+				hasPreviousPage
+				hasNextPage
 			}
 		}
 	}
@@ -147,11 +195,13 @@ export const FindAllTracksDocument = gql`
  * @example
  * const { data, loading, error } = useFindAllTracksQuery({
  *   variables: {
+ *      limit: // value for 'limit'
+ *      after: // value for 'after'
  *   },
  * });
  */
 export function useFindAllTracksQuery(
-	baseOptions?: Apollo.QueryHookOptions<FindAllTracksQuery, FindAllTracksQueryVariables>,
+	baseOptions: Apollo.QueryHookOptions<FindAllTracksQuery, FindAllTracksQueryVariables>,
 ) {
 	const options = { ...defaultOptions, ...baseOptions };
 	return Apollo.useQuery<FindAllTracksQuery, FindAllTracksQueryVariables>(
@@ -174,4 +224,4 @@ export type FindAllTracksQueryResult = Apollo.QueryResult<
 	FindAllTracksQuery,
 	FindAllTracksQueryVariables
 >;
-// Generated on 2021-03-21T19:32:07+01:00
+// Generated on 2021-03-28T00:49:25+01:00
