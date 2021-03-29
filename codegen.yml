@@ -30,7 +30,6 @@ generates:
   src/apollo/possibleTypes.ts:
     plugins:
       - "fragment-matcher"
-      - time
     hooks:
       afterOneFileWrite:
         - prettier --write

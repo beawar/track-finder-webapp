@@ -6,4 +6,8 @@ fragment BaseTrack on Track {
 	time
 	altitudeDifference
 	uploadTime
+	activity {
+		id
+		name
+	}
 }

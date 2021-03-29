@@ -13,7 +13,6 @@ import {
 	Typography,
 } from '@material-ui/core';
 import map from 'lodash/map';
-import { red } from '@material-ui/core/colors';
 import LinkRoundedIcon from '@material-ui/icons/LinkRounded';
 import GetAppRoundedIcon from '@material-ui/icons/GetAppRounded';
 import { Skeleton } from '@material-ui/lab';
@@ -21,7 +20,6 @@ import { Track } from '../types/graphql';
 import { CardPreview } from './CardPreview';
 import { CustomChip } from './CustomChip';
 import { chipFactory } from '../utils/chipsFactory';
-import HikingRoundedIcon from '../icons/HikingRounded';
 
 const Description = styled(Typography)({
 	'-webkit-line-clamp': '2',
@@ -95,11 +93,6 @@ const TrackItem = ({ track }: TrackItemProps): JSX.Element => {
 									flexWrap="wrap"
 								>
 									{chips}
-									<CustomChip
-										label="Trekking"
-										backgroundColor={red[700]}
-										icon={<HikingRoundedIcon style={{ color: 'white' }} />}
-									/>
 								</Box>
 							</CardContent>
 							<CardResources>
