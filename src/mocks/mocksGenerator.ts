@@ -1,5 +1,5 @@
 import faker from 'faker';
-import { Link, Track } from '../types/graphql';
+import { Activity, Link, Track } from '../types/graphql';
 import { TRACKS_LOAD_LIMIT } from '../utils/constants';
 
 function generateLink(trackId: string, id?: number): Link {
@@ -20,6 +20,17 @@ function generateLinks(trackId: string, limit = 0): Link[] {
 	return links;
 }
 
+function generateActivity(name?: string): Activity {
+	const activities = ['Trekking', 'Via Ferrata', 'Ciaspole', 'Scialpinismo', 'Passeggiata'];
+
+	const index = faker.random.number(activities.length - 1);
+
+	return {
+		id: `${name ? index : index + 1}`,
+		name: name || activities[index],
+	};
+}
+
 function generateTrack(id?: number): Track {
 	const idStr = id !== undefined ? `${id}` : `${faker.random.number()}`;
 	return {
@@ -32,6 +43,7 @@ function generateTrack(id?: number): Track {
 		time: `PT${faker.random.number(36)}H${faker.random.number(59)}M`,
 		title: faker.random.words(),
 		uploadTime: faker.date.past().toISOString(),
+		activity: generateActivity(),
 	};
 }
 

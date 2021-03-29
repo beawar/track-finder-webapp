@@ -20,6 +20,12 @@ export type Scalars = {
 	Duration: string;
 };
 
+export type Activity = {
+	__typename?: 'Activity';
+	id: Scalars['ID'];
+	name: Scalars['String'];
+};
+
 export type Link = {
 	__typename?: 'Link';
 	id: Scalars['ID'];
@@ -40,6 +46,9 @@ export type Mutation = {
 	/** link mutation */
 	createLink: Track;
 	deleteLink?: Maybe<Track>;
+	createActivity: Activity;
+	deleteActivity?: Maybe<Activity>;
+	updateActivity?: Maybe<Activity>;
 };
 
 export type MutationCreateTrackArgs = {
@@ -58,21 +67,36 @@ export type MutationDeleteLinkArgs = {
 	id: Scalars['ID'];
 };
 
+export type MutationCreateActivityArgs = {
+	name: Scalars['String'];
+};
+
+export type MutationDeleteActivityArgs = {
+	id: Scalars['ID'];
+};
+
+export type MutationUpdateActivityArgs = {
+	id: Scalars['ID'];
+	name: Scalars['String'];
+};
+
 export type PageInfo = {
 	__typename?: 'PageInfo';
+	startCursor?: Maybe<Scalars['ID']>;
+	endCursor?: Maybe<Scalars['ID']>;
 	hasPreviousPage: Scalars['Boolean'];
 	hasNextPage: Scalars['Boolean'];
 };
 
 export type Query = {
 	__typename?: 'Query';
-	/** track query */
 	getTrack?: Maybe<Track>;
 	findAll: Array<Track>;
 	getAllPageable?: Maybe<TrackConnection>;
 	findByTitleDescription: Array<Track>;
-	/** link query */
 	getLink?: Maybe<Link>;
+	getActivities: Array<Activity>;
+	getActivity?: Maybe<Activity>;
 };
 
 export type QueryGetTrackArgs = {
@@ -92,6 +116,10 @@ export type QueryGetLinkArgs = {
 	id: Scalars['ID'];
 };
 
+export type QueryGetActivityArgs = {
+	id: Scalars['ID'];
+};
+
 export type Track = {
 	__typename?: 'Track';
 	id: Scalars['ID'];
@@ -102,6 +130,7 @@ export type Track = {
 	altitudeDifference?: Maybe<Scalars['Int']>;
 	links: Array<Link>;
 	uploadTime: Scalars['DateTime'];
+	activity?: Maybe<Activity>;
 };
 
 export type TrackConnection = {
@@ -123,12 +152,13 @@ export type TrackInput = {
 	time?: Maybe<Scalars['Duration']>;
 	altitudeDifference?: Maybe<Scalars['Int']>;
 	links?: Maybe<Array<LinkInput>>;
+	activity?: Maybe<Scalars['ID']>;
 };
 
 export type BaseTrackFragment = { __typename?: 'Track' } & Pick<
 	Track,
 	'id' | 'title' | 'description' | 'length' | 'time' | 'altitudeDifference' | 'uploadTime'
->;
+> & { activity?: Maybe<{ __typename?: 'Activity' } & Pick<Activity, 'id' | 'name'>> };
 
 export type FindAllTracksQueryVariables = Exact<{
 	limit: Scalars['Int'];
@@ -159,6 +189,10 @@ export const BaseTrackFragmentDoc = gql`
 		time
 		altitudeDifference
 		uploadTime
+		activity {
+			id
+			name
+		}
 	}
 `;
 export const FindAllTracksDocument = gql`
@@ -224,4 +258,4 @@ export type FindAllTracksQueryResult = Apollo.QueryResult<
 	FindAllTracksQuery,
 	FindAllTracksQueryVariables
 >;
-// Generated on 2021-03-28T00:49:25+01:00
+// Generated on 2021-03-29T22:19:14+02:00
