@@ -7,5 +7,8 @@ declare global {
 		interface Global {
 			apolloClient: ApolloClient<InMemoryCache>;
 		}
+		interface Window {
+			IntersectionObserver: typeof IntersectionObserver;
+		}
 	}
 }

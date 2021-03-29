@@ -1,18 +1,27 @@
 import { graphql, GraphQLContext, GraphQLRequest, ResponseComposition } from 'msw';
+import map from 'lodash/map';
+import faker from 'faker';
 import { FindAllTracksQuery, FindAllTracksQueryVariables } from '../types/graphql';
 import { generateTracks } from './mocksGenerator';
 
 function handler(
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	req: GraphQLRequest<FindAllTracksQueryVariables>,
 	res: ResponseComposition,
 	ctx: GraphQLContext<FindAllTracksQuery>,
 ) {
-	const tracks = generateTracks();
+	const { limit, after } = req.variables;
+	const tracks = generateTracks(limit);
+	const edges = map(tracks, (track) => ({ cursor: track.id, node: track }));
 
 	return res(
 		ctx.data({
-			findAll: tracks,
+			getAllPageable: {
+				edges,
+				pageInfo: {
+					hasPreviousPage: after != null,
+					hasNextPage: tracks.length === limit && faker.random.boolean(),
+				},
+			},
 		}),
 	);
 }

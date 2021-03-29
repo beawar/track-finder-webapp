@@ -1,11 +1,20 @@
 #import BaseTrack from '../fragments/BaseTrack.graphql'
 
-query findAllTracks {
-	findAll {
-		...BaseTrack
-		links {
-			id
-			link
+query findAllTracks($limit: Int!, $after: ID) {
+	getAllPageable(limit: $limit, after: $after) {
+		edges {
+			cursor
+			node {
+				...BaseTrack
+				links {
+					id
+					link
+				}
+			}
+		}
+		pageInfo {
+			hasPreviousPage
+			hasNextPage
 		}
 	}
 }
