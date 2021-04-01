@@ -10,29 +10,44 @@ import {
 	Hidden,
 	Link,
 	ListItem,
-	styled,
+	Skeleton,
 	Typography,
 } from '@material-ui/core';
 import map from 'lodash/map';
 import LinkRoundedIcon from '@material-ui/icons/LinkRounded';
 import GetAppRoundedIcon from '@material-ui/icons/GetAppRounded';
-import { Skeleton } from '@material-ui/lab';
+import styled from '@emotion/styled';
 import { Track } from '../types/graphql';
 import { CardPreview } from './CardPreview';
 import { CustomChip } from './CustomChip';
 import { chipFactory } from '../utils/chipsFactory';
 
-const Description = styled(Typography)({
-	'-webkit-line-clamp': '2',
-	'-webkit-box-orient': 'vertical',
-	overflow: 'hidden',
-	display: '-webkit-box',
-});
+const Description = styled(Typography)`
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	display: -webkit-box;
+`;
 
-const CardResources = styled(CardActions)({
-	paddingLeft: '16px',
-	paddingRight: '16px',
-});
+const CardResources = styled(CardActions)`
+	padding-left: 16px;
+	padding-right: 16px;
+`;
+
+const ChipsContainer = styled.div`
+	display: flex;
+	justify-content: flex-start;
+	margin: 0.5rem auto;
+	gap: 0.5rem;
+	flex-wrap: wrap;
+`;
+
+const LinksContainer = styled.div`
+	flex-grow: 1;
+	gap: 0.5rem;
+	display: flex;
+	align-items: center;
+`;
 
 interface TrackListItemProps {
 	track?: Track;
@@ -53,7 +68,7 @@ const TrackItem = ({ track }: TrackItemProps): JSX.Element => {
 						<Link href={link} key={id} target="_blank" rel="noreferrer">
 							{link}
 						</Link>
-					),
+					)
 			)
 		);
 	}, [track]);
@@ -73,54 +88,42 @@ const TrackItem = ({ track }: TrackItemProps): JSX.Element => {
 	const history = useHistory();
 
 	return (
-		<Box width="100%">
-			<Card raised>
-				<CardActionArea component="div" onClick={() => history.push(`/track/${track.id}`)}>
-					<Box display="flex" alignItems="center">
-						<Hidden xsDown>
-							<Box flexBasis="20%" display="flex" alignSelf="stretch">
-								<CardPreview url={track.links?.length > 0 ? track.links[0].link : undefined} />
-							</Box>
-						</Hidden>
-						<Box flexBasis="80%" minWidth={0} flexGrow={1}>
-							<CardContent>
-								<Typography variant="h5">{track.title}</Typography>
-								<Box maxWidth="100%">
-									<Description variant="body2">{track.description}</Description>
-								</Box>
-								<Box
-									display="flex"
-									justifyContent="flex-start"
-									marginY="0.5rem"
-									gridGap="0.5rem"
-									flexWrap="wrap"
-								>
-									{chips}
-								</Box>
-							</CardContent>
-							<CardResources>
-								<Box flexGrow={1} gridGap="0.5rem" display="flex" alignItems="center">
-									{links && links.length > 0 && links[0]}
-									{links && links.length > 1 && (
-										<Badge badgeContent={`+${links.length - 1}`} color="secondary">
-											<LinkRoundedIcon />
-										</Badge>
-									)}
-								</Box>
-								<GetAppRoundedIcon />
-							</CardResources>
-						</Box>
+		<Card raised sx={{ width: '100%' }}>
+			<CardActionArea component="div" sx={{ display: 'flex', alignItems: 'center' }} onClick={() => history.push(`/track/${track.id}`)}>
+				<Hidden smDown>
+					<Box flexBasis="20%" display="flex" alignSelf="stretch">
+						<CardPreview url={track.links?.length > 0 ? track.links[0].link : undefined} />
 					</Box>
-				</CardActionArea>
-			</Card>
-		</Box>
+				</Hidden>
+				<Box flexBasis="80%" minWidth={0} flexGrow={1}>
+					<CardContent>
+						<Typography variant="h5">{track.title}</Typography>
+						<Description variant="body2" sx={{ maxWidth: '100%' }}>
+							{track.description}
+						</Description>
+						<ChipsContainer>{chips}</ChipsContainer>
+					</CardContent>
+					<CardResources>
+						<LinksContainer>
+							{links && links.length > 0 && links[0]}
+							{links && links.length > 1 && (
+								<Badge badgeContent={`+${links.length - 1}`} color="secondary">
+									<LinkRoundedIcon />
+								</Badge>
+							)}
+						</LinksContainer>
+						<GetAppRoundedIcon />
+					</CardResources>
+				</Box>
+			</CardActionArea>
+		</Card>
 	);
 };
 
 const skeletonTrack = {} as Track;
 
 const SkeletonTrackItem = React.forwardRef((props, ref: ForwardedRef<HTMLDivElement>) => (
-	<Skeleton width="100%" variant="rect" ref={ref}>
+	<Skeleton width="100%" variant="rectangular" ref={ref}>
 		<TrackItem track={skeletonTrack} />
 	</Skeleton>
 ));
@@ -128,5 +131,5 @@ const SkeletonTrackItem = React.forwardRef((props, ref: ForwardedRef<HTMLDivElem
 export const TrackListItem = React.forwardRef(
 	({ track }: TrackListItemProps, ref: ForwardedRef<HTMLDivElement>): JSX.Element => (
 		<ListItem>{track ? <TrackItem track={track} /> : <SkeletonTrackItem ref={ref} />}</ListItem>
-	),
+	)
 );

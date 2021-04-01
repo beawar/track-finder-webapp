@@ -1,4 +1,6 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 
-export const ErrorPage = (): JSX.Element => <Redirect to="/" />;
+const ErrorPage = (): JSX.Element => <Redirect to="/" />;
+
+export default ErrorPage;

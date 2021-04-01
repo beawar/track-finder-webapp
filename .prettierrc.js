@@ -9,5 +9,5 @@ module.exports = {
   jsxSingleQuote: false,
   bracketSpacing: true,
   jsxBracketSameLine: false,
-  trailingComma: 'all',
+  trailingComma: 'es5',
 };
