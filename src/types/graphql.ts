@@ -91,9 +91,7 @@ export type PageInfo = {
 export type Query = {
 	__typename?: 'Query';
 	getTrack?: Maybe<Track>;
-	findAll: Array<Track>;
-	getAllPageable?: Maybe<TrackConnection>;
-	findByTitleDescription: Array<Track>;
+	getTracks?: Maybe<TrackConnection>;
 	getLink?: Maybe<Link>;
 	getActivities: Array<Activity>;
 	getActivity?: Maybe<Activity>;
@@ -103,13 +101,11 @@ export type QueryGetTrackArgs = {
 	id: Scalars['ID'];
 };
 
-export type QueryGetAllPageableArgs = {
+export type QueryGetTracksArgs = {
 	limit: Scalars['Int'];
 	after?: Maybe<Scalars['ID']>;
-};
-
-export type QueryFindByTitleDescriptionArgs = {
-	searchText: Scalars['String'];
+	sort?: Maybe<Array<TrackSort>>;
+	searchText?: Maybe<Scalars['String']>;
 };
 
 export type QueryGetLinkArgs = {
@@ -155,18 +151,46 @@ export type TrackInput = {
 	activity?: Maybe<Scalars['ID']>;
 };
 
+export enum TrackSort {
+	IdAsc = 'ID_ASC',
+	IdDesc = 'ID_DESC',
+	UploadTimeAsc = 'UPLOAD_TIME_ASC',
+	UploadTimeDesc = 'UPLOAD_TIME_DESC',
+	TitleAsc = 'TITLE_ASC',
+	TitleDesc = 'TITLE_DESC',
+	TimeAsc = 'TIME_ASC',
+	TimeDesc = 'TIME_DESC',
+	LengthAsc = 'LENGTH_ASC',
+	LengthDesc = 'LENGTH_DESC',
+	AltDiffAsc = 'ALT_DIFF_ASC',
+	AltDiffDesc = 'ALT_DIFF_DESC',
+	ActivityNameAsc = 'ACTIVITY_NAME_ASC',
+	ActivityNameDesc = 'ACTIVITY_NAME_DESC',
+}
+
 export type BaseTrackFragment = { __typename?: 'Track' } & Pick<
 	Track,
 	'id' | 'title' | 'description' | 'length' | 'time' | 'altitudeDifference' | 'uploadTime'
-> & { activity?: Maybe<{ __typename?: 'Activity' } & Pick<Activity, 'id' | 'name'>> };
+> & {
+		activity?: Maybe<{ __typename?: 'Activity' } & Pick<Activity, 'id' | 'name'>>;
+		links: Array<{ __typename?: 'Link' } & Pick<Link, 'id' | 'link'>>;
+	};
 
-export type FindAllTracksQueryVariables = Exact<{
+export type GetTrackQueryVariables = Exact<{
+	id: Scalars['ID'];
+}>;
+
+export type GetTrackQuery = { __typename?: 'Query' } & {
+	getTrack?: Maybe<{ __typename?: 'Track' } & BaseTrackFragment>;
+};
+
+export type GetTracksQueryVariables = Exact<{
 	limit: Scalars['Int'];
 	after?: Maybe<Scalars['ID']>;
 }>;
 
-export type FindAllTracksQuery = { __typename?: 'Query' } & {
-	getAllPageable?: Maybe<
+export type GetTracksQuery = { __typename?: 'Query' } & {
+	getTracks?: Maybe<
 		{ __typename?: 'TrackConnection' } & {
 			edges: Array<
 				{ __typename?: 'TrackEdge' } & Pick<TrackEdge, 'cursor'> & {
@@ -193,11 +217,55 @@ export const BaseTrackFragmentDoc = gql`
 			id
 			name
 		}
+		links {
+			id
+			link
+		}
 	}
 `;
-export const FindAllTracksDocument = gql`
-	query findAllTracks($limit: Int!, $after: ID) {
-		getAllPageable(limit: $limit, after: $after) {
+export const GetTrackDocument = gql`
+	query getTrack($id: ID!) {
+		getTrack(id: $id) {
+			...BaseTrack
+		}
+	}
+	${BaseTrackFragmentDoc}
+`;
+
+/**
+ * __useGetTrackQuery__
+ *
+ * To run a query within a React component, call `useGetTrackQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTrackQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTrackQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetTrackQuery(
+	baseOptions: Apollo.QueryHookOptions<GetTrackQuery, GetTrackQueryVariables>,
+) {
+	const options = { ...defaultOptions, ...baseOptions };
+	return Apollo.useQuery<GetTrackQuery, GetTrackQueryVariables>(GetTrackDocument, options);
+}
+export function useGetTrackLazyQuery(
+	baseOptions?: Apollo.LazyQueryHookOptions<GetTrackQuery, GetTrackQueryVariables>,
+) {
+	const options = { ...defaultOptions, ...baseOptions };
+	return Apollo.useLazyQuery<GetTrackQuery, GetTrackQueryVariables>(GetTrackDocument, options);
+}
+export type GetTrackQueryHookResult = ReturnType<typeof useGetTrackQuery>;
+export type GetTrackLazyQueryHookResult = ReturnType<typeof useGetTrackLazyQuery>;
+export type GetTrackQueryResult = Apollo.QueryResult<GetTrackQuery, GetTrackQueryVariables>;
+export const GetTracksDocument = gql`
+	query getTracks($limit: Int!, $after: ID) {
+		getTracks(limit: $limit, after: $after) {
 			edges {
 				cursor
 				node {
@@ -218,44 +286,35 @@ export const FindAllTracksDocument = gql`
 `;
 
 /**
- * __useFindAllTracksQuery__
+ * __useGetTracksQuery__
  *
- * To run a query within a React component, call `useFindAllTracksQuery` and pass it any options that fit your needs.
- * When your component renders, `useFindAllTracksQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetTracksQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTracksQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useFindAllTracksQuery({
+ * const { data, loading, error } = useGetTracksQuery({
  *   variables: {
  *      limit: // value for 'limit'
  *      after: // value for 'after'
  *   },
  * });
  */
-export function useFindAllTracksQuery(
-	baseOptions: Apollo.QueryHookOptions<FindAllTracksQuery, FindAllTracksQueryVariables>,
+export function useGetTracksQuery(
+	baseOptions: Apollo.QueryHookOptions<GetTracksQuery, GetTracksQueryVariables>,
 ) {
 	const options = { ...defaultOptions, ...baseOptions };
-	return Apollo.useQuery<FindAllTracksQuery, FindAllTracksQueryVariables>(
-		FindAllTracksDocument,
-		options,
-	);
+	return Apollo.useQuery<GetTracksQuery, GetTracksQueryVariables>(GetTracksDocument, options);
 }
-export function useFindAllTracksLazyQuery(
-	baseOptions?: Apollo.LazyQueryHookOptions<FindAllTracksQuery, FindAllTracksQueryVariables>,
+export function useGetTracksLazyQuery(
+	baseOptions?: Apollo.LazyQueryHookOptions<GetTracksQuery, GetTracksQueryVariables>,
 ) {
 	const options = { ...defaultOptions, ...baseOptions };
-	return Apollo.useLazyQuery<FindAllTracksQuery, FindAllTracksQueryVariables>(
-		FindAllTracksDocument,
-		options,
-	);
+	return Apollo.useLazyQuery<GetTracksQuery, GetTracksQueryVariables>(GetTracksDocument, options);
 }
-export type FindAllTracksQueryHookResult = ReturnType<typeof useFindAllTracksQuery>;
-export type FindAllTracksLazyQueryHookResult = ReturnType<typeof useFindAllTracksLazyQuery>;
-export type FindAllTracksQueryResult = Apollo.QueryResult<
-	FindAllTracksQuery,
-	FindAllTracksQueryVariables
->;
-// Generated on 2021-03-29T22:19:14+02:00
+export type GetTracksQueryHookResult = ReturnType<typeof useGetTracksQuery>;
+export type GetTracksLazyQueryHookResult = ReturnType<typeof useGetTracksLazyQuery>;
+export type GetTracksQueryResult = Apollo.QueryResult<GetTracksQuery, GetTracksQueryVariables>;
+// Generated on 2021-04-14T21:41:26+02:00

@@ -10,4 +10,8 @@ fragment BaseTrack on Track {
 		id
 		name
 	}
+	links {
+		id
+		link
+	}
 }

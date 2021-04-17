@@ -1,13 +1,13 @@
 import { render, screen } from '@testing-library/react';
 import { MockedProvider } from '@apollo/client/testing';
 import { App } from './App';
-import { FindAllTracksDocument } from './types/graphql';
+import { GetTracksDocument } from './types/graphql';
 
 test('renders learn react link', () => {
 	const mocks = [
 		{
 			request: {
-				query: FindAllTracksDocument,
+				query: GetTracksDocument,
 			},
 			result: {
 				data: {
