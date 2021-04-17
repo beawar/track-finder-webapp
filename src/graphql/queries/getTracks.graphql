@@ -1,7 +1,7 @@
 #import BaseTrack from '../fragments/BaseTrack.graphql'
 
-query getTracks($limit: Int!, $after: ID) {
-	getTracks(limit: $limit, after: $after) {
+query getTracks($limit: Int!, $after: ID, $sort: [TrackSort!], $searchText: String) {
+	getTracks(limit: $limit, after: $after, sort: $sort, searchText: $searchText) {
 		edges {
 			cursor
 			node {

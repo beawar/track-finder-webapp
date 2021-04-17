@@ -25,6 +25,12 @@ export function parseTime(time: string): string | null {
 	return null;
 }
 
+export function getTime(days: number, hours: number, minutes: number): string {
+	dayjs.extend(duration);
+	const time = dayjs.duration({ days, hours, minutes });
+	return time.toISOString();
+}
+
 export function formatDate(date: Maybe<Date>): string | null {
 	if (date) {
 		dayjs.extend(localizedFormat);
@@ -38,4 +44,15 @@ export function parseDate(date: Scalars['DateTime']): Date | null {
 		return dayjs(date).toDate();
 	}
 	return null;
+}
+
+export function formatLinkDisplayName(url: string): string {
+	if (url.trim().length > 0) {
+		let displayName = url.replace(/https?:\/\//, '');
+		displayName =
+			displayName.substring(0, displayName.indexOf('/')) +
+			displayName.substring(displayName.lastIndexOf('/'));
+		return displayName;
+	}
+	return '';
 }

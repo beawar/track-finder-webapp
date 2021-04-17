@@ -1,0 +1,11 @@
+#import BaseTrack from '../fragments/BaseTrack.graphql'
+
+mutation createTrack($track: TrackInput!) {
+    createTrack(track: $track) {
+        ...BaseTrack
+        links {
+            link
+            mainLink
+        }
+    }
+}

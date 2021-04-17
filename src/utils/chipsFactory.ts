@@ -3,7 +3,7 @@ import reduce from 'lodash/reduce';
 import { amber, blue, lightGreen, red } from '@material-ui/core/colors';
 import UpdateRoundedIcon from '@material-ui/icons/UpdateRounded';
 import TrendingUpRoundedIcon from '@material-ui/icons/TrendingUpRounded';
-import { SvgIcon } from '@material-ui/core';
+import { SvgIcon, SvgIconProps } from '@material-ui/core';
 import { TransferWithinAStationRounded } from '@material-ui/icons';
 import { parseTime } from './utils';
 import { Activity, Track } from '../types/graphql';
@@ -30,7 +30,7 @@ const backgroundColors: { [key: string]: string } = {
 	[chipsFields.activity]: red[700],
 };
 
-const icons: { [key: string]: typeof SvgIcon } = {
+const icons: { [key: string]: React.FC<SvgIconProps> } = {
 	[chipsFields.duration]: UpdateRoundedIcon,
 	[chipsFields.altitude]: TrendingUpRoundedIcon,
 	[chipsFields.distance]: TransferWithinAStationRounded,
@@ -40,7 +40,7 @@ const icons: { [key: string]: typeof SvgIcon } = {
 interface ChipField {
 	label: React.ReactNode;
 	backgroundColor: string;
-	icon: typeof SvgIcon;
+	icon: React.FC<SvgIconProps>;
 	key: string;
 }
 
@@ -53,15 +53,17 @@ export const chipFactory = (track: Track): ChipField[] => {
 				if (labelParser[field]) {
 					label = labelParser[field](label);
 				}
-				accumulator.push({
-					label,
-					backgroundColor: backgroundColors[field],
-					icon: icons[field],
-					key: field,
-				});
+				if (label) {
+					accumulator.push({
+						label,
+						backgroundColor: backgroundColors[field],
+						icon: icons[field],
+						key: field,
+					});
+				}
 			}
 			return accumulator;
 		},
-		[],
+		[]
 	);
 };

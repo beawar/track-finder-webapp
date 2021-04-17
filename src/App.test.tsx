@@ -19,7 +19,7 @@ test('renders learn react link', () => {
 	render(
 		<MockedProvider mocks={mocks} cache={global.apolloClient.cache}>
 			<App />
-		</MockedProvider>,
+		</MockedProvider>
 	);
 	const titleElement = screen.getByText(/track finder/i);
 	expect(titleElement).toBeInTheDocument();

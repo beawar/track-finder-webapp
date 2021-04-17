@@ -59,17 +59,14 @@ interface TrackItemProps {
 
 const TrackItem = ({ track }: TrackItemProps): JSX.Element => {
 	const links = useMemo(() => {
-		return (
-			track &&
-			map(
-				track.links,
-				({ link, id }) =>
-					link && (
-						<Link href={link} key={id} target="_blank" rel="noreferrer">
-							{link}
-						</Link>
-					)
-			)
+		return map(
+			track.links,
+			({ link, id }) =>
+				link && (
+					<Link href={link} key={id} target="_blank" rel="noreferrer">
+						{link}
+					</Link>
+				)
 		);
 	}, [track]);
 
@@ -112,7 +109,7 @@ const TrackItem = ({ track }: TrackItemProps): JSX.Element => {
 								</Badge>
 							)}
 						</LinksContainer>
-						<GetAppRoundedIcon />
+						<GetAppRoundedIcon sx={{ marginLeft: '1rem' }} />
 					</CardResources>
 				</Box>
 			</CardActionArea>

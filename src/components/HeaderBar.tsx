@@ -11,12 +11,16 @@ import {
 	Typography,
 } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
-import AddCircleIcon from '@material-ui/icons/AddCircle';
+import AddIcon from '@material-ui/icons/Add';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import { HideOnScroll } from './HideOnScroll';
 import { route } from '../routes';
 
-export const HeaderBar: React.FC = ({ children }) => {
+interface HeaderBarProps {
+	createOption?: boolean;
+}
+
+export const HeaderBar: React.FC<HeaderBarProps> = ({ children, createOption = true }) => {
 	const [drawerOpen, setDrawerOpen] = useState(false);
 	const history = useHistory();
 
@@ -40,9 +44,11 @@ export const HeaderBar: React.FC = ({ children }) => {
 							<Typography variant="h6">Track finder</Typography>
 						</NavLink>
 						{children}
-						<IconButton edge="end" onClick={addNewTrack}>
-							<AddCircleIcon />
-						</IconButton>
+						{createOption && (
+							<IconButton edge="end" onClick={addNewTrack}>
+								<AddIcon fontSize="large" />
+							</IconButton>
+						)}
 					</Toolbar>
 				</AppBar>
 			</HideOnScroll>

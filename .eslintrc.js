@@ -76,6 +76,7 @@ module.exports = {
 		'react/react-in-jsx-scope': 'off',
 		'import/no-extraneous-dependencies': 'warn',
 		'react/require-default-props': 'off',
+		'react/jsx-no-duplicate-props': ['error', { ignoreCase: false }],
 	},
 	settings: {
 		'import/resolver': {
