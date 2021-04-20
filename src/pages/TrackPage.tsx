@@ -6,7 +6,7 @@ import { Text } from '../components/Text';
 import { TrackDetail } from '../components/TrackDetail';
 import { Scalars } from '../types/graphql';
 
-export const TrackPage: React.FC = () => {
+export const TrackPage: React.VFC = () => {
 	const { id } = useParams<{ id: Scalars['ID'] }>();
 
 	return (
