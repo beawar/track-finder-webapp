@@ -11,13 +11,12 @@ export type InputTextProps = TextFieldProps & {
 
 export const InputText: React.VFC<InputTextProps> = ({ name, errorMsg, ...props }) => {
 	const [field, meta, { setValue }] = useField(name);
-	const [innerValue, setInnerValue] = useState<unknown>('');
+	const [innerValue, setInnerValue] = useState<unknown>(props.value || field.value || '');
 
 	useEffect(() => {
-		setInnerValue(props.value ?? '');
-	}, [props.value]);
+		setInnerValue(field.value ?? '');
+	}, [field.value]);
 
-	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const setValueDebounced = useCallback(
 		debounce((event) => {
 			setValue(event.target.value);
@@ -27,14 +26,13 @@ export const InputText: React.VFC<InputTextProps> = ({ name, errorMsg, ...props 
 
 	const onChangeHandler = useCallback(
 		(event) => {
-			console.log('change', name, event.target.value, props.value);
 			setInnerValue(event.target.value);
 			setValueDebounced(event);
 			if (props.onChange) {
 				props.onChange(event);
 			}
 		},
-		[name, props, setValueDebounced]
+		[props, setValueDebounced]
 	);
 
 	const onBlurHandler = useCallback(

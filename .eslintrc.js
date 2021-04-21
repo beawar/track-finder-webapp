@@ -20,7 +20,13 @@ module.exports = {
 		project: 'tsconfig.eslint.json',
 		sourceType: 'module',
 	},
-	plugins: ['react', '@typescript-eslint', 'react-hooks', 'eslint-plugin-import-helpers'],
+	plugins: [
+		'react',
+		'@typescript-eslint',
+		'react-hooks',
+		'eslint-plugin-import-helpers',
+		'unused-imports',
+	],
 	rules: {
 		'no-use-before-define': 'off',
 		'@typescript-eslint/no-use-before-define': ['error'],
@@ -77,6 +83,12 @@ module.exports = {
 		'import/no-extraneous-dependencies': 'warn',
 		'react/require-default-props': 'off',
 		'react/jsx-no-duplicate-props': ['error', { ignoreCase: false }],
+		'no-unused-vars': 'off',
+		'unused-imports/no-unused-imports': 'error',
+		'unused-imports/no-unused-vars': [
+			'warn',
+			{ vars: 'all', varsIgnorePattern: '^_', args: 'after-used', argsIgnorePattern: '^_' },
+		],
 	},
 	settings: {
 		'import/resolver': {

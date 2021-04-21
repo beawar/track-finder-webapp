@@ -8,7 +8,7 @@ import ErrorPage from './pages/ErrorPage';
 import EditTrackPage from './pages/EditTrackPage';
 
 const routeComponents = [
-	{ path: route.edit, component: EditTrackPage },
+	{ path: `${route.edit}/:trackId?`, component: EditTrackPage },
 	{ path: route.home, component: HomePage },
 	{ path: route.error, component: ErrorPage },
 ];
@@ -19,7 +19,7 @@ export function App(): JSX.Element {
 			<Suspense fallback={<FallbackPage />}>
 				<Switch>
 					{map(routeComponents, ({ path, component: Component }, key) => (
-						<Route key={key} path={path} exact>
+						<Route key={key} path={path}>
 							<Component />
 						</Route>
 					))}

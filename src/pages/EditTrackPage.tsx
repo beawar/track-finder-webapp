@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import {
 	Button,
 	Container,
@@ -25,10 +25,14 @@ import {
 	LinkInput,
 	useCreateTrackMutation,
 	useGetActivitiesQuery,
-	useGetTrackQuery,
+	useGetTrackQuery, useUpdateTrackMutation,
 } from '../types/graphql';
-import { getTime } from '../utils/utils';
+import { getTime, parseTime } from '../utils/utils';
 import { InputLink } from '../components/form/InputLink';
+
+interface EditTrackPageRouteParams {
+	trackId: string;
+}
 
 interface FormLinkInput {
 	url: string;
@@ -45,7 +49,7 @@ interface FormValues {
 	minutes: number;
 	altitude: number;
 	links: FormLinkInput[];
-	mainLink: number;
+	mainLink: string | null;
 }
 
 const MainContainer = styled(Container)`
@@ -75,6 +79,7 @@ const FormBox = styled(Container)`
 	${({ theme }) => theme.breakpoints.up('md')} {
 		flex-basis: 49%;
 	}
+
 	${({ theme }) => theme.breakpoints.up('lg')} {
 		margin: 0;
 	}
@@ -88,17 +93,21 @@ const LinkInputContainer = styled(Container)`
 	justify-content: space-between;
 	align-items: flex-start;
 	gap: 0.5rem;
+
 	${({ theme }) => theme.breakpoints.up(theme.breakpoints.width('lg') + 80)} {
 		min-width: calc(${({ theme }) => theme.breakpoints.width('sm') * 2}px + 2rem);
 		margin-left: 3px;
 		margin-right: -3px;
 	}
+
 	${({ theme }) => theme.breakpoints.down('md')} {
 		max-width: ${({ theme }) => theme.breakpoints.width('sm')}px;
 		margin: 0;
 	}
+
 	& > div {
 		max-width: ${({ theme }) => theme.breakpoints.width('sm')}px;
+
 		${({ theme }) => theme.breakpoints.up('md')} {
 			flex-basis: 49%;
 		}
@@ -114,15 +123,19 @@ const FormRow = styled.div`
 
 const LinkFormRow = styled(FormRow)`
 	justify-content: center;
+
 	${({ theme }) => theme.breakpoints.up(theme.breakpoints.width('lg') + 80)} {
 		justify-content: unsafe center;
 	}
+
 	${({ theme }) => theme.breakpoints.down('sm')} {
 		flex-wrap: wrap;
+
 		.MuiIconButton-root {
 			margin-right: 0;
 			margin-left: auto;
 		}
+
 		.MuiRadio-root {
 			margin-left: 0;
 			margin-right: auto;
@@ -185,56 +198,105 @@ const validationSchema = yup.object().shape({
 			label: yup.string(),
 		})
 	),
-	mainLink: yup.number(),
+	mainLink: yup.number().nullable(),
 });
 
 const EditTrackPage: React.FC = () => {
+	const { trackId } = useParams<EditTrackPageRouteParams>();
+	const { data: trackData } = useGetTrackQuery({
+		variables: {
+			id: trackId,
+		},
+		skip: !trackId,
+	});
 	const { data: activityList } = useGetActivitiesQuery();
 	const [createTrack] = useCreateTrackMutation({
+		refetchQueries: ['getTracks'],
+	});
+	const [updateTrack] = useUpdateTrackMutation({
 		refetchQueries: ['getTracks'],
 	});
 	const history = useHistory();
 
 	const initialValues = useMemo(() => {
-		return {
-			title: '',
-			description: '',
-			activity: null,
-			distance: 0,
-			days: 0,
-			hours: 0,
-			minutes: 0,
-			altitude: 0,
-			links: [{ url: '', label: '' }],
-			mainLink: 0,
+		const track = trackData?.getTrack;
+		const activity = track?.activity && {
+			label: track.activity.name,
+			value: track.activity,
 		};
-	}, []);
+		let time;
+		if (track?.time) {
+			time = parseTime(track.time);
+		}
+		let mainLink: number | null = null;
+		const links =
+			track?.links &&
+			map(track.links, (link, index) => {
+				if (link.mainLink) {
+					mainLink = index;
+				}
+				return {
+					url: link.link,
+					label: '',
+				};
+			});
+		return {
+			title: track?.title || '',
+			description: track?.description || '',
+			activity: activity || null,
+			distance: track?.length || 0,
+			days: time?.days() || 0,
+			hours: time?.hours() || 0,
+			minutes: time?.minutes() || 0,
+			altitude: track?.altitudeDifference || 0,
+			links: links || [{ url: '', label: '' }],
+			mainLink,
+		};
+	}, [trackData?.getTrack]);
 
 	const submitHandler = useCallback(
 		(values: FormValues, { setSubmitting }) => {
 			const links: LinkInput[] = map(values.links, (link, index) => ({
 				link: link.url,
-				mainLink: index === values.mainLink,
+				mainLink: index.toString() === values.mainLink,
 			}));
 
-			createTrack({
-				variables: {
-					track: {
-						title: values.title,
-						description: values.description,
-						activity: values.activity?.value.id || null,
-						altitudeDifference: values.altitude,
-						length: values.distance,
-						time: getTime(values.days, values.hours, values.minutes),
-						links,
+			new Promise(() => {
+				if (!trackId) {
+					return createTrack({
+						variables: {
+							track: {
+								title: values.title,
+								description: values.description,
+								activity: values.activity?.value.id || null,
+								altitudeDifference: values.altitude,
+								length: values.distance,
+								time: getTime(values.days, values.hours, values.minutes),
+								links,
+							},
+						},
+					});
+				}
+				return updateTrack({
+					variables: {
+						id: trackId,
+						track: {
+							title: values.title,
+							description: values.description,
+							activity: values.activity?.value.id || null,
+							altitudeDifference: values.altitude,
+							length: values.distance,
+							time: getTime(values.days, values.hours, values.minutes),
+							links,
+						},
 					},
-				},
+				});
 			}).then(() => {
 				setSubmitting(false);
 				history.push('/');
 			});
 		},
-		[createTrack, history]
+		[createTrack, history, trackId, updateTrack]
 	);
 
 	const activities = useMemo(() => {
@@ -257,10 +319,9 @@ const EditTrackPage: React.FC = () => {
 						<LinkFormRow key={index}>
 							<Radio
 								name="mainLink"
-								checked={values.mainLink.toString() === index.toString()}
+								checked={values.mainLink === index.toString()}
 								value={index}
 								onChange={handleChange}
-								inputProps={{ 'aria-label': index.toString() }}
 								title="Main link"
 								sx={{ alignSelf: 'center' }}
 							/>
@@ -291,6 +352,52 @@ const EditTrackPage: React.FC = () => {
 		[]
 	);
 
+	const formComponent = useCallback(
+		({ values, errors, handleChange }: FormikProps<FormValues>): React.ReactNode => {
+			return (
+				<FormContainer>
+					<FormBox maxWidth="sm" disableGutters>
+						<InputText label="Title" name="title" />
+						<InputText label="Description" name="description" multiline rows={20} />
+					</FormBox>
+					<FormBox maxWidth="sm" disableGutters>
+						<InputSelection label="Activity" name="activity" options={activities} />
+						<FormRow>
+							<InputNumber
+								label="Distance"
+								name="distance"
+								InputProps={{
+									endAdornment: <InputAdornment position="start">Km</InputAdornment>,
+								}}
+							/>
+							<InputNumber
+								label="Altitude"
+								name="altitude"
+								InputProps={{
+									endAdornment: <InputAdornment position="start">m</InputAdornment>,
+								}}
+							/>
+						</FormRow>
+						<FormRow>
+							<InputNumber label="Days" name="days" />
+							<InputNumber label="Hours" name="hours" />
+							<InputNumber label="Minutes" name="minutes" />
+						</FormRow>
+					</FormBox>
+					<LinksContainer disableGutters>
+						<FieldArray name="links">{inputLinks(values, errors, handleChange)}</FieldArray>
+					</LinksContainer>
+					<FooterBox disableGutters>
+						<Button variant="contained" type="submit">
+							Submit
+						</Button>
+					</FooterBox>
+				</FormContainer>
+			);
+		},
+		[]
+	);
+
 	return (
 		<>
 			<HeaderBar createOption={false} />
@@ -306,47 +413,10 @@ const EditTrackPage: React.FC = () => {
 					initialValues={initialValues}
 					onSubmit={submitHandler}
 					validationSchema={validationSchema}
+					enableReinitialize
+					key={`edit-${trackId}`}
 				>
-					{({ values, errors, handleChange }: FormikProps<FormValues>) => (
-						<FormContainer>
-							<FormBox maxWidth="sm" disableGutters>
-								<InputText label="Title" name="title" />
-								<InputText label="Description" name="description" multiline rows={20} />
-							</FormBox>
-							<FormBox maxWidth="sm" disableGutters>
-								<InputSelection label="Activity" name="activity" options={activities} />
-								<FormRow>
-									<InputNumber
-										label="Distance"
-										name="distance"
-										InputProps={{
-											endAdornment: <InputAdornment position="start">Km</InputAdornment>,
-										}}
-									/>
-									<InputNumber
-										label="Altitude"
-										name="altitude"
-										InputProps={{
-											endAdornment: <InputAdornment position="start">m</InputAdornment>,
-										}}
-									/>
-								</FormRow>
-								<FormRow>
-									<InputNumber label="Days" name="days" />
-									<InputNumber label="Hours" name="hours" />
-									<InputNumber label="Minutes" name="minutes" />
-								</FormRow>
-							</FormBox>
-							<LinksContainer disableGutters>
-								<FieldArray name="links">{inputLinks(values, errors, handleChange)}</FieldArray>
-							</LinksContainer>
-							<FooterBox disableGutters>
-								<Button variant="contained" type="submit">
-									Submit
-								</Button>
-							</FooterBox>
-						</FormContainer>
-					)}
+					{formComponent}
 				</Formik>
 			</MainContainer>
 		</>

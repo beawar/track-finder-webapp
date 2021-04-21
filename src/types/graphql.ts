@@ -42,6 +42,7 @@ export type Mutation = {
 	__typename?: 'Mutation';
 	/** track mutation */
 	createTrack: Track;
+	updateTrack: Track;
 	deleteTrack?: Maybe<Track>;
 	/** link mutation */
 	createLink: Track;
@@ -52,6 +53,11 @@ export type Mutation = {
 };
 
 export type MutationCreateTrackArgs = {
+	track: TrackInput;
+};
+
+export type MutationUpdateTrackArgs = {
+	id: Scalars['ID'];
 	track: TrackInput;
 };
 
@@ -173,7 +179,7 @@ export type BaseTrackFragment = { __typename?: 'Track' } & Pick<
 	'id' | 'title' | 'description' | 'length' | 'time' | 'altitudeDifference' | 'uploadTime'
 > & {
 		activity?: Maybe<{ __typename?: 'Activity' } & Pick<Activity, 'id' | 'name'>>;
-		links: Array<{ __typename?: 'Link' } & Pick<Link, 'id' | 'link'>>;
+		links: Array<{ __typename?: 'Link' } & Pick<Link, 'id' | 'link' | 'mainLink'>>;
 	};
 
 export type CreateTrackMutationVariables = Exact<{
@@ -181,9 +187,16 @@ export type CreateTrackMutationVariables = Exact<{
 }>;
 
 export type CreateTrackMutation = { __typename?: 'Mutation' } & {
-	createTrack: { __typename?: 'Track' } & {
-		links: Array<{ __typename?: 'Link' } & Pick<Link, 'link' | 'mainLink'>>;
-	} & BaseTrackFragment;
+	createTrack: { __typename?: 'Track' } & BaseTrackFragment;
+};
+
+export type UpdateTrackMutationVariables = Exact<{
+	id: Scalars['ID'];
+	track: TrackInput;
+}>;
+
+export type UpdateTrackMutation = { __typename?: 'Mutation' } & {
+	updateTrack: { __typename?: 'Track' } & BaseTrackFragment;
 };
 
 export type GetActivitiesQueryVariables = Exact<{ [key: string]: never }>;
@@ -212,9 +225,7 @@ export type GetTracksQuery = { __typename?: 'Query' } & {
 		{ __typename?: 'TrackConnection' } & {
 			edges: Array<
 				{ __typename?: 'TrackEdge' } & Pick<TrackEdge, 'cursor'> & {
-						node: { __typename?: 'Track' } & {
-							links: Array<{ __typename?: 'Link' } & Pick<Link, 'id' | 'link'>>;
-						} & BaseTrackFragment;
+						node: { __typename?: 'Track' } & BaseTrackFragment;
 					}
 			>;
 			pageInfo: { __typename?: 'PageInfo' } & Pick<PageInfo, 'hasPreviousPage' | 'hasNextPage'>;
@@ -238,6 +249,7 @@ export const BaseTrackFragmentDoc = gql`
 		links {
 			id
 			link
+			mainLink
 		}
 	}
 `;
@@ -245,10 +257,6 @@ export const CreateTrackDocument = gql`
 	mutation createTrack($track: TrackInput!) {
 		createTrack(track: $track) {
 			...BaseTrack
-			links {
-				link
-				mainLink
-			}
 		}
 	}
 	${BaseTrackFragmentDoc}
@@ -289,6 +297,52 @@ export type CreateTrackMutationResult = Apollo.MutationResult<CreateTrackMutatio
 export type CreateTrackMutationOptions = Apollo.BaseMutationOptions<
 	CreateTrackMutation,
 	CreateTrackMutationVariables
+>;
+export const UpdateTrackDocument = gql`
+	mutation updateTrack($id: ID!, $track: TrackInput!) {
+		updateTrack(id: $id, track: $track) {
+			...BaseTrack
+		}
+	}
+	${BaseTrackFragmentDoc}
+`;
+export type UpdateTrackMutationFn = Apollo.MutationFunction<
+	UpdateTrackMutation,
+	UpdateTrackMutationVariables
+>;
+
+/**
+ * __useUpdateTrackMutation__
+ *
+ * To run a mutation, you first call `useUpdateTrackMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateTrackMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateTrackMutation, { data, loading, error }] = useUpdateTrackMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      track: // value for 'track'
+ *   },
+ * });
+ */
+export function useUpdateTrackMutation(
+	baseOptions?: Apollo.MutationHookOptions<UpdateTrackMutation, UpdateTrackMutationVariables>
+) {
+	const options = { ...defaultOptions, ...baseOptions };
+	return Apollo.useMutation<UpdateTrackMutation, UpdateTrackMutationVariables>(
+		UpdateTrackDocument,
+		options
+	);
+}
+export type UpdateTrackMutationHookResult = ReturnType<typeof useUpdateTrackMutation>;
+export type UpdateTrackMutationResult = Apollo.MutationResult<UpdateTrackMutation>;
+export type UpdateTrackMutationOptions = Apollo.BaseMutationOptions<
+	UpdateTrackMutation,
+	UpdateTrackMutationVariables
 >;
 export const GetActivitiesDocument = gql`
 	query getActivities {
@@ -385,10 +439,6 @@ export const GetTracksDocument = gql`
 				cursor
 				node {
 					...BaseTrack
-					links {
-						id
-						link
-					}
 				}
 			}
 			pageInfo {
@@ -434,4 +484,4 @@ export function useGetTracksLazyQuery(
 export type GetTracksQueryHookResult = ReturnType<typeof useGetTracksQuery>;
 export type GetTracksLazyQueryHookResult = ReturnType<typeof useGetTracksLazyQuery>;
 export type GetTracksQueryResult = Apollo.QueryResult<GetTracksQuery, GetTracksQueryVariables>;
-// Generated on 2021-04-14T23:05:52+02:00
+// Generated on 2021-04-21T21:38:23+02:00

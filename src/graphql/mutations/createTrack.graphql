@@ -3,9 +3,5 @@
 mutation createTrack($track: TrackInput!) {
     createTrack(track: $track) {
         ...BaseTrack
-        links {
-            link
-            mainLink
-        }
     }
 }

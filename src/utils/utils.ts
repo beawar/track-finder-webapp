@@ -3,13 +3,19 @@ import localizedFormat from 'dayjs/plugin/localizedFormat';
 import duration from 'dayjs/plugin/duration';
 import { Maybe, Scalars } from '../types/graphql';
 
-export function parseTime(time: string): string | null {
+export function parseTime(time: Maybe<Scalars['Duration']>): duration.Duration | null {
 	if (time) {
 		dayjs.extend(duration);
-		const timeDuration = dayjs.duration({ hours: 0, minutes: 0 }).add(time);
-		const days = timeDuration.days();
-		const hours = timeDuration.hours();
-		const minutes = timeDuration.minutes();
+		return dayjs.duration({ hours: 0, minutes: 0 }).add(time);
+	}
+	return null;
+}
+
+export function formatTime(time: Maybe<duration.Duration>): string | null {
+	if (time) {
+		const days = time.days();
+		const hours = time.hours();
+		const minutes = time.minutes();
 		let resultString = '';
 		if (days > 0) {
 			resultString += `${days}d `;
