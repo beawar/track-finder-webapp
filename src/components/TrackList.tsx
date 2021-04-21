@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { List, Typography } from '@material-ui/core';
 import map from 'lodash/map';
-import { Scalars, useFindAllTracksQuery } from '../types/graphql';
+import { Scalars, useGetTracksQuery } from '../types/graphql';
 import { TrackListItem } from './TrackListItem';
 import { TRACKS_LOAD_LIMIT } from '../utils/constants';
 
@@ -10,22 +10,22 @@ export const TrackList = (): JSX.Element => {
 	const listRef = useRef<HTMLUListElement>(null);
 	const [lastCursor, setLastCursor] = useState<Scalars['ID']>();
 	const [hasNextPage, setHasNextPage] = useState<boolean>(false);
-	const { data, loading, error, fetchMore } = useFindAllTracksQuery({
+	const { data, loading, error, fetchMore } = useGetTracksQuery({
 		variables: {
 			limit: TRACKS_LOAD_LIMIT,
 		},
 		notifyOnNetworkStatusChange: true,
-		onCompleted({ getAllPageable }) {
-			if (getAllPageable) {
-				setHasNextPage(getAllPageable.pageInfo.hasNextPage);
-				setLastCursor(getAllPageable.edges[getAllPageable.edges.length - 1].node.id);
+		onCompleted({ getTracks }) {
+			if (getTracks) {
+				setHasNextPage(getTracks.pageInfo.hasNextPage);
+				setLastCursor(getTracks.edges[getTracks.edges.length - 1].node.id);
 			}
 		},
 	});
 
 	const tracks = useMemo(() => {
-		if (data?.getAllPageable?.edges) {
-			return map(data.getAllPageable.edges, ({ node: track }) => (
+		if (data?.getTracks?.edges) {
+			return map(data.getTracks.edges, ({ node: track }) => (
 				<TrackListItem key={track.id} track={track} />
 			));
 		}

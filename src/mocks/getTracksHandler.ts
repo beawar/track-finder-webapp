@@ -1,13 +1,13 @@
 import { graphql, GraphQLContext, GraphQLRequest, ResponseComposition } from 'msw';
 import map from 'lodash/map';
 import faker from 'faker';
-import { FindAllTracksQuery, FindAllTracksQueryVariables } from '../types/graphql';
+import { GetTracksQuery, GetTracksQueryVariables } from '../types/graphql';
 import { generateTracks } from './mocksGenerator';
 
 function handler(
-	req: GraphQLRequest<FindAllTracksQueryVariables>,
+	req: GraphQLRequest<GetTracksQueryVariables>,
 	res: ResponseComposition,
-	ctx: GraphQLContext<FindAllTracksQuery>,
+	ctx: GraphQLContext<GetTracksQuery>,
 ) {
 	const { limit, after } = req.variables;
 	const tracks = generateTracks(limit);
@@ -15,7 +15,7 @@ function handler(
 
 	return res(
 		ctx.data({
-			getAllPageable: {
+			getTracks: {
 				edges,
 				pageInfo: {
 					hasPreviousPage: after != null,
@@ -26,7 +26,7 @@ function handler(
 	);
 }
 
-export const findAllTracksHandler = graphql.query<FindAllTracksQuery, FindAllTracksQueryVariables>(
-	'findAllTracks',
+export const getTracksHandler = graphql.query<GetTracksQuery, GetTracksQueryVariables>(
+	'getTracks',
 	handler,
 );

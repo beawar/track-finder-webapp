@@ -31,7 +31,7 @@ function generateActivity(name?: string): Activity {
 	};
 }
 
-function generateTrack(id?: number): Track {
+export function generateTrack(id?: number): Track {
 	const idStr = id !== undefined ? `${id}` : `${faker.random.number()}`;
 	return {
 		__typename: 'Track',

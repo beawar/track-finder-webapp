@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
 import duration from 'dayjs/plugin/duration';
-import { Maybe } from '../types/graphql';
+import { Maybe, Scalars } from '../types/graphql';
 
 export function parseTime(time: string): string | null {
 	if (time) {
@@ -25,10 +25,17 @@ export function parseTime(time: string): string | null {
 	return null;
 }
 
-export function parseDate(date: Maybe<Date>): string | null {
+export function formatDate(date: Maybe<Date>): string | null {
 	if (date) {
 		dayjs.extend(localizedFormat);
 		return dayjs(date).format('L');
+	}
+	return null;
+}
+
+export function parseDate(date: Scalars['DateTime']): Date | null {
+	if (date) {
+		return dayjs(date).toDate();
 	}
 	return null;
 }

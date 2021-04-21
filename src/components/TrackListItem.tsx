@@ -1,4 +1,5 @@
 import React, { ForwardedRef, useMemo } from 'react';
+import { useHistory } from 'react-router-dom';
 import {
 	Badge,
 	Box,
@@ -69,10 +70,12 @@ const TrackItem = ({ track }: TrackItemProps): JSX.Element => {
 		));
 	}, [track]);
 
+	const history = useHistory();
+
 	return (
 		<Box width="100%">
 			<Card raised>
-				<CardActionArea component="div">
+				<CardActionArea component="div" onClick={() => history.push(`/track/${track.id}`)}>
 					<Box display="flex" alignItems="center">
 						<Hidden xsDown>
 							<Box flexBasis="20%" display="flex" alignSelf="stretch">
