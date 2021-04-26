@@ -21,6 +21,7 @@ import { Track } from '../types/graphql';
 import { CardPreview } from './CardPreview';
 import { CustomChip } from './CustomChip';
 import { chipFactory } from '../utils/chipsFactory';
+import { ChipsContainer, FlexBox } from './StyledComponents';
 
 const Description = styled(Typography)`
 	-webkit-line-clamp: 2;
@@ -34,18 +35,8 @@ const CardResources = styled(CardActions)`
 	padding-right: 16px;
 `;
 
-const ChipsContainer = styled.div`
-	display: flex;
-	justify-content: flex-start;
-	margin: 0.5rem auto;
-	gap: 0.5rem;
-	flex-wrap: wrap;
-`;
-
-const LinksContainer = styled.div`
+const LinksContainer = styled(FlexBox)`
 	flex-grow: 1;
-	gap: 0.5rem;
-	display: flex;
 	align-items: center;
 `;
 
@@ -86,11 +77,15 @@ const TrackItem = ({ track }: TrackItemProps): JSX.Element => {
 
 	return (
 		<Card raised sx={{ width: '100%' }}>
-			<CardActionArea component="div" sx={{ display: 'flex', alignItems: 'center' }} onClick={() => history.push(`/track/${track.id}`)}>
+			<CardActionArea
+				component="div"
+				sx={{ display: 'flex', alignItems: 'center' }}
+				onClick={() => history.push(`/track/${track.id}`)}
+			>
 				<Hidden smDown>
-					<Box flexBasis="20%" display="flex" alignSelf="stretch">
+					<FlexBox flexBasis="20%" alignSelf="stretch">
 						<CardPreview url={track.links?.length > 0 ? track.links[0].link : undefined} />
-					</Box>
+					</FlexBox>
 				</Hidden>
 				<Box flexBasis="80%" minWidth={0} flexGrow={1}>
 					<CardContent>

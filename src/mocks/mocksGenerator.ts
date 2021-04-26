@@ -1,6 +1,7 @@
 import faker from 'faker';
 import map from 'lodash/map';
-import { Activity, Link, Track } from '../types/graphql';
+import dayjs from 'dayjs';
+import { Activity, Link, Track, TrackInput } from '../types/graphql';
 import { TRACKS_LOAD_LIMIT } from '../utils/constants';
 
 export function generateLink(trackId: string, id?: number): Link {
@@ -21,26 +22,25 @@ export function generateLinks(trackId: string, limit = 0): Link[] {
 	return links;
 }
 
-const activities = ['Trekking', 'Via Ferrata', 'Ciaspole', 'Scialpinismo', 'Passeggiata'];
-
 export function generateActivities(): Activity[] {
-	return map(activities, (activity, index) => ({
-		id: index.toString(),
-		name: activity,
-		__typename: 'Activity',
-	}));
+	return map(
+		['Trekking', 'Via Ferrata', 'Ciaspole', 'Scialpinismo', 'Passeggiata'],
+		(value, index) => ({
+			id: `${index}`,
+			name: value,
+			__typename: 'Activity',
+		})
+	);
 }
 
-export function generateActivity(name?: string): Activity {
-	const index = faker.datatype.number(activities.length - 1);
+export function generateActivity(id?: number): Activity {
+	const activities = generateActivities();
+	const index = id || faker.datatype.number(activities.length - 1);
 
-	return {
-		id: `${name ? index : index + 1}`,
-		name: name || activities[index],
-	};
+	return activities[index];
 }
 
-export function generateTrack(id?: number): Track {
+export function generateTrack(id?: number | string): Track {
 	const idStr = id !== undefined ? `${id}` : `${faker.datatype.number()}`;
 	return {
 		__typename: 'Track',
@@ -58,16 +58,30 @@ export function generateTrack(id?: number): Track {
 
 export function generateTracks(limit?: number): Track[] {
 	const tracksNumber =
-		limit !== undefined
-			? limit
-			: faker.datatype.number({
-					min: 1,
-					max: TRACKS_LOAD_LIMIT,
-			  });
+		limit ??
+		faker.datatype.number({
+			min: 1,
+			max: TRACKS_LOAD_LIMIT,
+		});
 
 	const tracks: Track[] = [];
 	for (let i = 0; i < tracksNumber; i += 1) {
 		tracks.push(generateTrack(i));
 	}
 	return tracks;
+}
+
+export function convertTrackInputToTrack(trackInput: TrackInput): Track {
+	const links = map(trackInput.links, (linkInput, index) => ({ ...linkInput, id: `${index}` }));
+	const activity =
+		trackInput.activity && Number.isInteger(trackInput.activity)
+			? generateActivity(Number.parseInt(trackInput.activity, 10))
+			: null;
+	return {
+		...trackInput,
+		id: '',
+		links,
+		activity,
+		uploadTime: dayjs().toISOString(),
+	};
 }

@@ -25,10 +25,12 @@ import {
 	LinkInput,
 	useCreateTrackMutation,
 	useGetActivitiesQuery,
-	useGetTrackQuery, useUpdateTrackMutation,
+	useGetTrackQuery,
+	useUpdateTrackMutation,
 } from '../types/graphql';
 import { getTime, parseTime } from '../utils/utils';
 import { InputLink } from '../components/form/InputLink';
+import { FlexBox } from '../components/StyledComponents';
 
 interface EditTrackPageRouteParams {
 	trackId: string;
@@ -59,10 +61,9 @@ const MainContainer = styled(Container)`
 	padding: ${({ theme }) => theme.spacing(3)};
 `;
 
-const TitleContainer = styled.div`
-	display: flex;
-	align-items: center;
+const TitleContainer = styled(FlexBox)`
 	justify-content: center;
+	align-items: center;
 	gap: 1rem;
 `;
 
@@ -201,7 +202,7 @@ const validationSchema = yup.object().shape({
 	mainLink: yup.number().nullable(),
 });
 
-const EditTrackPage: React.FC = () => {
+export const EditTrackPage: React.VFC = () => {
 	const { trackId } = useParams<EditTrackPageRouteParams>();
 	const { data: trackData } = useGetTrackQuery({
 		variables: {
@@ -422,5 +423,3 @@ const EditTrackPage: React.FC = () => {
 		</>
 	);
 };
-
-export default EditTrackPage;
