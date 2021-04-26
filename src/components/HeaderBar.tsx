@@ -9,16 +9,21 @@ import {
 	ListItemText,
 	Toolbar,
 } from '@material-ui/core';
-import MenuIcon from '@material-ui/icons/Menu';
 import AddIcon from '@material-ui/icons/Add';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import EditRoundedIcon from '@material-ui/icons/EditRounded';
+import MenuIcon from '@material-ui/icons/Menu';
 import styled from '@emotion/styled';
 import { HideOnScroll } from './HideOnScroll';
 import { route } from '../routes';
 import LogoImg from '../assets/logo.png';
+import { Scalars } from '../types/graphql';
+import { FlexBox } from './StyledComponents';
 
 interface HeaderBarProps {
 	createOption?: boolean;
+	editOption?: boolean;
+	trackId?: Scalars['ID'];
 }
 
 const Logo = styled.img`
@@ -39,7 +44,17 @@ const CustomDrawer = styled(Drawer)`
 	}
 `;
 
-export const HeaderBar: React.FC<HeaderBarProps> = ({ children, createOption = true }) => {
+const IconOptions = styled(FlexBox)`
+	margin-right: 0;
+	margin-left: auto;
+`;
+
+export const HeaderBar: React.FC<HeaderBarProps> = ({
+	children,
+	createOption = true,
+	editOption,
+	trackId,
+}) => {
 	const [drawerOpen, setDrawerOpen] = useState(false);
 	const history = useHistory();
 
@@ -66,11 +81,18 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({ children, createOption = t
 							<Logo src={LogoImg} alt="Track finder" />
 						</NavLink>
 						{children}
-						{createOption && (
-							<IconButton edge="end" onClick={goToPath(route.edit)}>
-								<AddIcon fontSize="large" />
-							</IconButton>
-						)}
+						<IconOptions>
+							{createOption && (
+								<IconButton onClick={goToPath(route.edit)}>
+									<AddIcon sx={{ fontSize: '2rem' }} />
+								</IconButton>
+							)}
+							{editOption && trackId && (
+								<IconButton onClick={goToPath(`${route.edit}/${trackId}`)}>
+									<EditRoundedIcon />
+								</IconButton>
+							)}
+						</IconOptions>
 					</Toolbar>
 				</AppBar>
 			</HideOnScroll>

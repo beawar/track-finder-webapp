@@ -54,7 +54,13 @@ const TrackItem = ({ track }: TrackItemProps): JSX.Element => {
 			track.links,
 			({ link, id }) =>
 				link && (
-					<Link href={link} key={id} target="_blank" rel="noreferrer">
+					<Link
+						href={link}
+						key={id}
+						target="_blank"
+						rel="noreferrer"
+						sx={{ wordBreak: 'break-all' }}
+					>
 						{link}
 					</Link>
 				)

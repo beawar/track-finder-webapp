@@ -10,7 +10,7 @@ export const TrackPage: React.VFC = () => {
 
 	return (
 		<>
-			<HeaderBar />
+			<HeaderBar editOption trackId={id} />
 			<Container maxWidth="lg">
 				<TrackDetail id={id} />
 			</Container>

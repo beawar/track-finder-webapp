@@ -16,6 +16,7 @@ import * as yup from 'yup';
 import styled from '@emotion/styled';
 import map from 'lodash/map';
 import DeleteRoundedIcon from '@material-ui/icons/DeleteRounded';
+import EditLocationAltRoundedIcon from '@material-ui/icons/EditLocationAltRounded';
 import { HeaderBar } from '../components/HeaderBar';
 import { InputText } from '../components/form/InputText';
 import { InputNumber } from '../components/form/InputNumber';
@@ -396,7 +397,7 @@ export const EditTrackPage: React.VFC = () => {
 				</FormContainer>
 			);
 		},
-		[]
+		[activities, inputLinks]
 	);
 
 	return (
@@ -404,9 +405,13 @@ export const EditTrackPage: React.VFC = () => {
 			<HeaderBar createOption={false} />
 			<MainContainer>
 				<TitleContainer>
-					<AddLocationRoundedIcon fontSize="large" color="primary" />
+					{trackId ? (
+						<EditLocationAltRoundedIcon fontSize="large" color="primary" />
+					) : (
+						<AddLocationRoundedIcon fontSize="large" color="primary" />
+					)}
 					<Typography variant="h4" sx={{ marginY: '1rem' }} textAlign="center">
-						Create a new track
+						{trackId ? 'Edit track' : 'Create a new track'}
 					</Typography>
 				</TitleContainer>
 				<Divider variant="middle" sx={{ marginY: '1rem' }} />
