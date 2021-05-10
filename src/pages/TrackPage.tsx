@@ -2,7 +2,6 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import { Container } from '@material-ui/core';
 import { HeaderBar } from '../components/HeaderBar';
-import { Text } from '../components/Text';
 import { TrackDetail } from '../components/TrackDetail';
 import { Scalars } from '../types/graphql';
 
@@ -11,9 +10,7 @@ export const TrackPage: React.VFC = () => {
 
 	return (
 		<>
-			<HeaderBar>
-				<Text type="h6">Track finder</Text>
-			</HeaderBar>
+			<HeaderBar editOption trackId={id} />
 			<Container maxWidth="lg">
 				<TrackDetail id={id} />
 			</Container>

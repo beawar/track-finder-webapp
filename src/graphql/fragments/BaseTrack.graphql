@@ -13,5 +13,6 @@ fragment BaseTrack on Track {
 	links {
 		id
 		link
+		mainLink
 	}
 }

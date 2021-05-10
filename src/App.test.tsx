@@ -1,7 +1,9 @@
+import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { MockedProvider } from '@apollo/client/testing';
 import { App } from './App';
 import { GetTracksDocument } from './types/graphql';
+import { StyleWrapper } from './components/StyleWrapper';
 
 test('renders learn react link', () => {
 	const mocks = [
@@ -18,9 +20,11 @@ test('renders learn react link', () => {
 	];
 	render(
 		<MockedProvider mocks={mocks} cache={global.apolloClient.cache}>
-			<App />
-		</MockedProvider>,
+			<StyleWrapper>
+				<App />
+			</StyleWrapper>
+		</MockedProvider>
 	);
-	const titleElement = screen.getByText(/track finder/i);
+	const titleElement = screen.getByAltText(/track finder/i);
 	expect(titleElement).toBeInTheDocument();
 });

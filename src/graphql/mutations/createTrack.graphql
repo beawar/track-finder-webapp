@@ -1,7 +1,7 @@
 #import BaseTrack from '../fragments/BaseTrack.graphql'
 
-query getTrack($id: ID!) {
-    getTrack(id: $id) {
+mutation createTrack($track: TrackInput!) {
+    createTrack(track: $track) {
         ...BaseTrack
     }
 }

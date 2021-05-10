@@ -6,7 +6,7 @@ const cache = new InMemoryCache({
 	typePolicies: {
 		Query: {
 			fields: {
-				getAllPageable: relayStylePagination(),
+				getTracks: relayStylePagination(),
 			},
 		},
 	},

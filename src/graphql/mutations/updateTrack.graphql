@@ -1,0 +1,7 @@
+#import BaseTrack from '../fragments/BaseTrack.graphql'
+
+mutation updateTrack($id: ID!, $track: TrackInput!) {
+    updateTrack(id: $id, track: $track) {
+        ...BaseTrack
+    }
+}

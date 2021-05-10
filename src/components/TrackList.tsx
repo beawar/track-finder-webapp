@@ -24,12 +24,10 @@ export const TrackList = (): JSX.Element => {
 	});
 
 	const tracks = useMemo(() => {
-		if (data?.getTracks?.edges) {
-			return map(data.getTracks.edges, ({ node: track }) => (
-				<TrackListItem key={track.id} track={track} />
-			));
-		}
-		return null;
+		return (
+			data?.getTracks?.edges &&
+			map(data.getTracks.edges, ({ node: track }) => <TrackListItem key={track.id} track={track} />)
+		);
 	}, [data]);
 
 	const loadMore = useCallback(() => {
@@ -38,7 +36,7 @@ export const TrackList = (): JSX.Element => {
 				variables: {
 					after: lastCursor,
 				},
-			});
+			}).catch((err) => console.error(err));
 		}
 	}, [loading, fetchMore, lastCursor]);
 
@@ -53,7 +51,7 @@ export const TrackList = (): JSX.Element => {
 			{
 				root: null,
 				threshold: 0.25,
-			},
+			}
 		);
 
 		const elementRef = skeletonRef.current;

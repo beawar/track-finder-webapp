@@ -1,17 +1,57 @@
 import React, { useMemo } from 'react';
 import map from 'lodash/map';
-import { List, ListItem, ListItemIcon, Box, Link, Typography } from '@material-ui/core';
+import { Container, Link, List, ListItem, ListItemIcon, Typography } from '@material-ui/core';
 import LinkRoundedIcon from '@material-ui/icons/LinkRounded';
 import GetAppRoundedIcon from '@material-ui/icons/GetAppRounded';
+import styled from '@emotion/styled';
 import { Scalars, useGetTrackQuery } from '../types/graphql';
 import { CustomChip } from './CustomChip';
 import { chipFactory } from '../utils/chipsFactory';
-import { parseDate, formatDate } from '../utils/utils';
-import PreviewMountain from './images/mountain-hexagon.svg';
+import { formatDate, parseDate } from '../utils/utils';
+import PreviewMountain from '../assets/mountain-hexagon.svg';
+import { ChipsContainer, FlexBox } from './StyledComponents';
 
 interface TrackDetailProps {
 	id: Scalars['ID'];
 }
+
+const MainContainer = styled(Container)`
+	margin-top: 2rem;
+`;
+
+const Row = styled(FlexBox)`
+	justify-content: space-between;
+	align-items: center;
+	margin-top: 1rem;
+	margin-bottom: 1rem;
+	flex-wrap: wrap;
+`;
+
+const MainBox = styled(FlexBox)`
+	align-items: flex-start;
+	margin-top: 1rem;
+	margin-bottom: 1rem;
+	${({ theme }) => theme.breakpoints.up('md')} {
+		& > * {
+			flex: 0 0 50%;
+		}
+	}
+	${({ theme }) => theme.breakpoints.down('md')} {
+		flex-direction: column-reverse;
+		align-items: center;
+	}
+`;
+
+const ImgBox = styled(FlexBox)`
+	justify-content: center;
+	& > img {
+		max-width: 100%;
+		max-height: 500px;
+		${({ theme }) => theme.breakpoints.up('md')} {
+			max-height: 45vh;
+		}
+	}
+`;
 
 export const TrackDetail: React.VFC<TrackDetailProps> = ({ id }) => {
 	const { data, loading, error } = useGetTrackQuery({
@@ -50,7 +90,7 @@ export const TrackDetail: React.VFC<TrackDetailProps> = ({ id }) => {
 								{link}
 							</Link>
 						</ListItem>
-					),
+					)
 			)
 		);
 	}, [data]);
@@ -68,55 +108,42 @@ export const TrackDetail: React.VFC<TrackDetailProps> = ({ id }) => {
 	}
 
 	return (
-		<>
-			<Box width="100%">
-				<Box marginTop="1rem">
-					<Typography variant="h3">{data.getTrack.title}</Typography>
-				</Box>
+		<MainContainer>
+			<Typography variant="h3">{data.getTrack.title}</Typography>
 
-				<Box display="flex" justifyContent="space-between" alignItems="center" flexWrap="wrap">
-					<Box
-						display="flex"
-						justifyContent="flex-center"
-						marginY="0.5rem"
-						gridGap="0.5rem"
-						flexWrap="wrap"
-					>
-						{chips}
-					</Box>
+			<Row>
+				<ChipsContainer>{chips}</ChipsContainer>
+				<Typography variant="h6">{formatDate(parseDate(data.getTrack.uploadTime))}</Typography>
+			</Row>
 
-					<Typography variant="h6">{formatDate(parseDate(data.getTrack.uploadTime))}</Typography>
-				</Box>
+			<MainBox>
+				<ImgBox>
+					<img src={PreviewMountain} alt="Track" />
+				</ImgBox>
+				<Typography variant="body2">{data.getTrack.description}</Typography>
+			</MainBox>
 
-				<Box marginY="1rem" display="flex">
-					<Box display="flex" marginRight="0.5rem" maxWidth="50%">
-						<img src={PreviewMountain} alt="Track" width="100%" />
-					</Box>
-
-					<Box display="flex" marginLeft="0.5rem" maxWidth="50%">
-						<Typography variant="body2">{data.getTrack.description}</Typography>
-					</Box>
-				</Box>
-
-				{links && links.length > 0 && (
-					<Box>
+			{links && links.length > 0 && (
+				<Row>
+					<div>
 						<Typography variant="h5">Links</Typography>
-						<Box gridGap="0.5rem" display="flex" alignItems="center">
-							<List dense>{links}</List>
-						</Box>
-					</Box>
-				)}
-
-				<Box>
+						<List dense>{links}</List>
+					</div>
+				</Row>
+			)}
+			<Row>
+				<div>
 					<Typography variant="h5">Download</Typography>
-					<ListItem>
-						<ListItemIcon>
-							<GetAppRoundedIcon />
-						</ListItemIcon>
-						<Typography variant="body2">Track recording .gpx</Typography>
-					</ListItem>
-				</Box>
-			</Box>
-		</>
+					<List dense>
+						<ListItem>
+							<ListItemIcon>
+								<GetAppRoundedIcon />
+							</ListItemIcon>
+							<Typography variant="body2">Track recording .gpx</Typography>
+						</ListItem>
+					</List>
+				</div>
+			</Row>
+		</MainContainer>
 	);
 };

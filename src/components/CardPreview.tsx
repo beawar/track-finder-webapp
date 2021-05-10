@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { CardMedia } from '@material-ui/core';
-import PreviewMountain from './images/mountain-hexagon.svg';
+import PreviewMountain from '../assets/mountain-hexagon.svg';
 
 interface CardPreviewProps {
 	url: string | undefined;
