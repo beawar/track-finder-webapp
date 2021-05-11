@@ -152,6 +152,7 @@ const FooterBox = styled(Container)`
 	flex: 0 0 100%;
 	margin: unset;
 	flex-direction: row-reverse;
+	gap: 0.5em;
 `;
 
 const validationSchema = yup.object().shape({
@@ -256,6 +257,14 @@ export const EditTrackPage: React.VFC = () => {
 		};
 	}, [trackData?.getTrack]);
 
+	const cancelHandler = useCallback(() => {
+		if (trackId) {
+			history.push(`/track/${trackId}`);
+		} else {
+			history.push('/');
+		}
+	}, [history, trackId]);
+
 	const submitHandler = useCallback(
 		(values: FormValues, { setSubmitting }) => {
 			const links: LinkInput[] = map(values.links, (link, index) => ({
@@ -263,23 +272,26 @@ export const EditTrackPage: React.VFC = () => {
 				mainLink: index.toString() === values.mainLink,
 			}));
 
-			new Promise(() => {
-				if (!trackId) {
-					return createTrack({
-						variables: {
-							track: {
-								title: values.title,
-								description: values.description,
-								activity: values.activity?.value.id || null,
-								altitudeDifference: values.altitude,
-								length: values.distance,
-								time: getTime(values.days, values.hours, values.minutes),
-								links,
-							},
+			if (!trackId) {
+				createTrack({
+					variables: {
+						track: {
+							title: values.title,
+							description: values.description,
+							activity: values.activity?.value.id || null,
+							altitudeDifference: values.altitude,
+							length: values.distance,
+							time: getTime(values.days, values.hours, values.minutes),
+							links,
 						},
-					});
-				}
-				return updateTrack({
+					},
+				}).then((result) => {
+					setSubmitting(false);
+					const toId = result.data?.createTrack.id;
+					history.push(`/track/${toId}`);
+				});
+			} else {
+				updateTrack({
 					variables: {
 						id: trackId,
 						track: {
@@ -292,11 +304,12 @@ export const EditTrackPage: React.VFC = () => {
 							links,
 						},
 					},
+				}).then((result) => {
+					setSubmitting(false);
+					const toId = result?.data?.updateTrack.id;
+					history.push(`/track/${toId}`);
 				});
-			}).then(() => {
-				setSubmitting(false);
-				history.push('/');
-			});
+			}
 		},
 		[createTrack, history, trackId, updateTrack]
 	);
@@ -360,7 +373,7 @@ export const EditTrackPage: React.VFC = () => {
 				<FormContainer>
 					<FormBox maxWidth="sm" disableGutters>
 						<InputText label="Title" name="title" />
-						<InputText label="Description" name="description" multiline rows={20} />
+						<InputText label="Description" name="description" multiline rows={10} />
 					</FormBox>
 					<FormBox maxWidth="sm" disableGutters>
 						<InputSelection label="Activity" name="activity" options={activities} />
@@ -393,16 +406,19 @@ export const EditTrackPage: React.VFC = () => {
 						<Button variant="contained" type="submit">
 							Submit
 						</Button>
+						<Button variant="contained" type="button" onClick={cancelHandler}>
+							Cancel
+						</Button>
 					</FooterBox>
 				</FormContainer>
 			);
 		},
-		[activities, inputLinks]
+		[activities, cancelHandler, inputLinks]
 	);
 
 	return (
 		<>
-			<HeaderBar createOption={false} />
+			<HeaderBar createOption={false} deleteOption trackId={trackId} />
 			<MainContainer>
 				<TitleContainer>
 					{trackId ? (
